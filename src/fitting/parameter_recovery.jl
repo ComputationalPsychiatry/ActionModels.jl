@@ -8,7 +8,8 @@ function single_recovery(
     parameters::Dict,
     prior_and_idx::Tuple,
     input_sequence_and_idx::Tuple,
-    simulation_idx::Int,
+    simulation_idx::Int;
+    check_parameter_rejections::Bool = false,
 )
     #Make a copy of the original agent to avoid changing it
     agent = deepcopy(original_agent)
@@ -17,24 +18,6 @@ function single_recovery(
     prior_idx, prior = prior_and_idx
     input_sequence_idx, input_sequence = input_sequence_and_idx
 
-    #Set the parameters for the agent
-    set_parameters!(agent, parameters)
-    reset!(agent)
-
-    #Give inputs and get simulated actions
-    simulated_actions = give_inputs!(agent, input_sequence)
-
-    #Create model
-    model = create_model(agent, prior, input_sequence, simulated_actions;)
-
-    #Fit the model to the simulated data
-    result = fit_model(model; sampler_settings..., progress = false)
-
-    #Extract the agent posteriors
-    agent_parameters = extract_quantities(model, result.chains)
-    posterior_medians = first(values(get_estimates(agent_parameters, Dict)))
-
-    ## - Rename dictionaries - ##
     #Make a renamed dictionary with true parameter values
     true_parameters = Dict()
     #For each parameter
@@ -51,6 +34,52 @@ function single_recovery(
         true_parameters[new_key] = parameters[key]
     end
 
+    #Set the parameters for the agent
+    set_parameters!(agent, parameters)
+    reset!(agent)
+    
+    #In the normal case
+    if !check_parameter_rejections
+        #Give inputs and get simulated actions
+        simulated_actions = give_inputs!(agent, input_sequence)
+
+    #If there is a check for parameter rejections
+    else
+        #Look for errors
+        try
+            #Give inputs and get simulated actions
+            simulated_actions = give_inputs!(agent, input_sequence)
+        #If there is an error
+        catch err
+            #If it is a parameter rejection
+            if err isa RejectParameters
+
+                #Return a dataframe without any parameter estimates
+                return hcat(
+                    DataFrame(true_parameters),
+                    DataFrame(
+                    prior_idx = prior_idx,
+                    input_sequence_idx = input_sequence_idx,
+                    simulation_idx = simulation_idx,)
+                    )
+
+            else
+                rethrow(err)
+            end
+        end
+    end
+
+    #Create model
+    model = create_model(agent, prior, input_sequence, simulated_actions; check_parameter_rejections = check_parameter_rejections)
+
+    #Fit the model to the simulated data
+    result = fit_model(model; sampler_settings..., progress = false)
+
+    #Extract the agent posteriors
+    agent_parameters = extract_quantities(model, result.chains)
+    posterior_medians = first(values(get_estimates(agent_parameters, Dict)))
+
+    ## - Rename dictionaries - ##
     #Make a renamed dictionary with estimated parameter values
     estimated_parameters = Dict()
     #For each parameter
@@ -88,6 +117,7 @@ function parameter_recovery(
     sampler_settings::NamedTuple = (),
     parallel::Bool = false,
     show_progress::Bool = true,
+    check_parameter_rejections::Bool = false,
 ) where {K<:Any,D<:Distribution,P<:Dict{K,D},V<:Any}
 
     ## - Format input - ##
@@ -147,19 +177,19 @@ function parameter_recovery(
     if show_progress
         #Run simulations and parameter fits in parallel
         outcome = @showprogress map_function(
-            recovery_info -> single_recovery(agent, sampler_settings, recovery_info...),
+            recovery_info -> single_recovery(agent, sampler_settings, recovery_info...; check_parameter_rejections = check_parameter_rejections),
             recovery_infos,
         )
     else
         #Run simulations and parameter fits in parallel
         outcome = map_function(
-            recovery_info -> single_recovery(agent, sampler_settings, recovery_info...),
+            recovery_info -> single_recovery(agent, sampler_settings, recovery_info...; check_parameter_rejections = check_parameter_rejections),
             recovery_infos,
         )
     end
 
     # Concatenate the outcomes into a single dataframe
-    outcome = vcat(outcome...)
+    outcome = vcat(outcome..., cols = :union)
 
     return outcome
 end

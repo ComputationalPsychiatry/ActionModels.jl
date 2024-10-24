@@ -401,7 +401,7 @@ using Turing: AutoReverseDiff
     end
 
     @testset "Check for parameter rejections" begin
-        #Action model with multiple actions    
+        #Action model which can error
         function action_with_errors(agent, input::R) where {R<:Real}
 
             noise = agent.parameters["noise"]
