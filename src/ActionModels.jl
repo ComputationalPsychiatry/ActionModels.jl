@@ -63,12 +63,11 @@ include(joinpath("defining_models", "model_attributes.jl"))
 include(joinpath("defining_models", "manipulate_attributes.jl"))
 include(joinpath("defining_models", "no_submodel_dispatches.jl"))
 #Read in all premade models
-# for premade_model_file in readdir(joinpath("src", "defining_models", "premade_models"))
-#     if endswith(premade_model_file, ".jl")
-#         include(joinpath("defining_models", "premade_models", premade_model_file))
-#     end
-# end
-include(joinpath("defining_models", "premade_models", "rescorla_wagner.jl"))
+for premade_model_file in readdir(joinpath("src", "defining_models", "premade_models"))
+    if endswith(premade_model_file, ".jl")
+        include(joinpath("defining_models", "premade_models", premade_model_file))
+    end
+end
 
 
 ### Functions for simulation ###
