@@ -83,5 +83,5 @@ makedocs(;
 
 deploydocs(;
     repo = "github.com/ComputationalPsychiatry/ActionModels.jl",
-    devbranch = "main",
+    devbranch = "dev",
 )
