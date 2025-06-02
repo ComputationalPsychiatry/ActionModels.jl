@@ -34,8 +34,8 @@ Literate.markdown(
     documenter = true,
 )
 
-#And the README
-Literate.markdown(joinpath(julia_files_folder, "README.jl"), project_dir, execute = true)
+# #And the README
+# Literate.markdown(joinpath(julia_files_folder, "README.jl"), project_dir, execute = true)
 
 
 
@@ -83,5 +83,5 @@ makedocs(;
 
 deploydocs(;
     repo = "github.com/ComputationalPsychiatry/ActionModels.jl",
-    devbranch = "main",
+    devbranch = "dev",
 )
