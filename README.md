@@ -1,4 +1,5 @@
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ComputationalPsychiatry.github.io/ActionModels.jl)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ComputationalPsychiatry.github.io/ActionModels.jl/stable/)
+[![Stable](https://img.shields.io/badge/docs-dev-blue.svg)](https://ComputationalPsychiatry.github.io/ActionModels.jl/dev/)
 [![Build Status](https://github.com/ComputationalPsychiatry/ActionModels.jl/actions/workflows/CI_full.yml/badge.svg?branch=main)](https://github.com/ComputationalPsychiatry/ActionModels.jl/actions/workflows/CI_full.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/ComputationalPsychiatry/ActionModels.jl/branch/main/graph/badge.svg?token=NVFiiPydFA)](https://codecov.io/gh/ComputationalPsychiatry/ActionModels.jl)
 [![License: GNU](https://img.shields.io/badge/License-GNU-yellow)](<https://www.gnu.org/licenses/>)
@@ -212,12 +213,12 @@ show(summarized_parameters)
  Row │ id      treatment  action_noise  learning_rate
      │ String  String     Float64       Float64
 ─────┼────────────────────────────────────────────────
-   1 │ A       control       0.0533494      0.0829092
-   2 │ B       control       0.175535       0.32356
-   3 │ C       control       2.23684        0.835531
-   4 │ A       treatment     0.036557       0.0379766
-   5 │ B       treatment     0.120174       0.171883
-   6 │ C       treatment     1.51937        0.693192
+   1 │ A       control       0.0540497      0.0830818
+   2 │ B       control       0.1761         0.322529
+   3 │ C       control       2.23036        0.842322
+   4 │ A       treatment     0.0370277      0.0381213
+   5 │ B       treatment     0.122187       0.17241
+   6 │ C       treatment     1.53131        0.701624
 ````
 
 We can also extract the estimated value of V at each timestep, for each participant:
@@ -238,21 +239,21 @@ show(summarized_trajectories)
      │ String  String     Int64     Float64?
 ─────┼─────────────────────────────────────────────
    1 │ A       control           0       0.0
-   2 │ A       control           1       0.0829092
-   3 │ A       control           2       0.158944
-   4 │ A       control           3       0.228676
-   5 │ A       control           4       0.375535
-   6 │ A       control           5       0.510218
-   7 │ A       control           6       0.633734
+   2 │ A       control           1       0.0830818
+   3 │ A       control           2       0.159261
+   4 │ A       control           3       0.229111
+   5 │ A       control           4       0.37624
+   6 │ A       control           5       0.511145
+   7 │ A       control           6       0.634841
    8 │ B       control           0       0.0
   ⋮  │   ⋮         ⋮         ⋮            ⋮
   36 │ C       treatment         0       0.0
-  37 │ C       treatment         1       0.693192
-  38 │ C       treatment         2       0.905869
-  39 │ C       treatment         3       0.97112
-  40 │ C       treatment         4       1.68433
-  41 │ C       treatment         5       1.90315
-  42 │ C       treatment         6       1.97029
+  37 │ C       treatment         1       0.701624
+  38 │ C       treatment         2       0.910971
+  39 │ C       treatment         3       0.973436
+  40 │ C       treatment         4       1.6937
+  41 │ C       treatment         5       1.90861
+  42 │ C       treatment         6       1.97273
                                     27 rows omitted
 ````
 
