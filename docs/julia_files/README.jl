@@ -1,4 +1,5 @@
-# [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ComputationalPsychiatry.github.io/ActionModels.jl)
+# [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ComputationalPsychiatry.github.io/ActionModels.jl/stable/)
+# [![Stable](https://img.shields.io/badge/docs-dev-blue.svg)](https://ComputationalPsychiatry.github.io/ActionModels.jl/dev/)
 # [![Build Status](https://github.com/ComputationalPsychiatry/ActionModels.jl/actions/workflows/CI_full.yml/badge.svg?branch=main)](https://github.com/ComputationalPsychiatry/ActionModels.jl/actions/workflows/CI_full.yml?query=branch%3Amain)
 # [![Coverage](https://codecov.io/gh/ComputationalPsychiatry/ActionModels.jl/branch/main/graph/badge.svg?token=NVFiiPydFA)](https://codecov.io/gh/ComputationalPsychiatry/ActionModels.jl)
 # [![License: GNU](https://img.shields.io/badge/License-GNU-yellow)](<https://www.gnu.org/licenses/>)

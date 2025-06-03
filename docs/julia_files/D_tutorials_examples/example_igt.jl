@@ -133,7 +133,7 @@ import Enzyme: set_runtime_activity, Reverse
 ad_type = AutoEnzyme(; mode = set_runtime_activity(Reverse, true));
 
 #Fit model
-chns = sample_posterior!(model, MCMCThreads(), n_chains = 2, n_samples = 500, ad_type = ad_type)
+chns = sample_posterior!(model, MCMCThreads(), init_params = :MAP, n_chains = 2, n_samples = 500, ad_type = ad_type)
 
 # We can now inspect the results of the fitting process.
 # We can plot the posterior distribution over the beta parameters of the regression model.
