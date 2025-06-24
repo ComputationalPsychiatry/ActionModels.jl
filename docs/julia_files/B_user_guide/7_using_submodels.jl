@@ -38,7 +38,7 @@ end
 # The attributes object, or whichvever subpart of it that will contain the states and parameters, needs to be mutable, as it will be updated during the model fitting process.
 # Additionally, in order to function with Turing, the attributes struct needs to have type parameters that are subtypes of Real for continuous (Float64) and discrete (Int64) parameters and states.
 # This is because some AD backends like ForwardDiff and ReverseDiff need to switch between different subtypes of Real to calculate gradients.
-# Notably, users may in some situations want to use the same type for the attributes object as for the submodel object above. This is possible.
+# Notably, users may in some situations want to use the same type for the attributes object as for the submodel object above. This is possible, since `AbstractSubmodelAttributes` is a subtype of `AbstractSubmodel`.
 
 Base.@kwdef mutable struct RescorlaWagnerAttributes{T<:Real} <:
                            ActionModels.AbstractSubmodelAttributes
