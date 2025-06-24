@@ -1,5 +1,5 @@
 """
-    Agent{TH}
+    Agent{T<:AbstractSubmodel}
 
 Container for a simulated agent, including the action model, model attributes, state history, and number of timesteps.
 
@@ -19,10 +19,10 @@ Action model: rescorla_wagner_act_after_update
 This agent has received 0 observations
 ```
 """
-struct Agent{TH<:NamedTuple}
+struct Agent{T<:AbstractSubmodel}
     action_model::Function
     model_attributes::ModelAttributes
-    history::TH
+    history::NamedTuple
     n_timesteps::Variable{Int64}
 end
 
@@ -105,6 +105,9 @@ function init_agent(
         push!(state, get_states(model_attributes, state_name))
     end
 
+    #Get submodel type
+    submodel_type = typeof(action_model.submodel)
+
     ## Create agent ##
-    Agent(action_model.action_model, model_attributes, history, Variable{Int64}(0))
+    Agent{submodel_type}(action_model.action_model, model_attributes, history, Variable{Int64}(0))
 end
