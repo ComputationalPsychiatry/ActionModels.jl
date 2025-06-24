@@ -49,7 +49,7 @@ Plot{Plots.GRBackend() n=1}
     state_history = replace(state_history, missing => NaN)
 
     #The x-axis starts at 0 and goes to the number of timesteps
-    x_axis = collect(0:agent.n_timesteps)
+    x_axis = collect(0:agent.n_timesteps.value)
 
     xlabel --> "Timestep"
     yguide --> "$target_state"
