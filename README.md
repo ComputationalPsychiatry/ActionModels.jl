@@ -2,7 +2,7 @@
 [![Stable](https://img.shields.io/badge/docs-dev-blue.svg)](https://ComputationalPsychiatry.github.io/ActionModels.jl/dev/)
 [![Build Status](https://github.com/ComputationalPsychiatry/ActionModels.jl/actions/workflows/CI_full.yml/badge.svg?branch=main)](https://github.com/ComputationalPsychiatry/ActionModels.jl/actions/workflows/CI_full.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/ComputationalPsychiatry/ActionModels.jl/branch/main/graph/badge.svg?token=NVFiiPydFA)](https://codecov.io/gh/ComputationalPsychiatry/ActionModels.jl)
-[![License: GNU](https://img.shields.io/badge/License-GNU-yellow)](<https://www.gnu.org/licenses/>)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 # Welcome to ActionModels!

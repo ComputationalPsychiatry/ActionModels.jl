@@ -459,7 +459,8 @@ end
 ### TYPES FOR USE IN THE ACTION MODEL ###
 #########################################
 ## Abstract type for submodel attributes ##
-abstract type AbstractSubmodelAttributes end
+# It is a subtype of AbstractSubmodel, so that attributes can be as Submodels too
+abstract type AbstractSubmodelAttributes <: AbstractSubmodel end
 
 struct NoSubModelAttributes <: AbstractSubmodelAttributes end
 

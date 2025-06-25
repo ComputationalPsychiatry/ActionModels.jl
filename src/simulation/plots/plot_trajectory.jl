@@ -30,7 +30,7 @@ Plot{Plots.GRBackend() n=1}
     state_history = get_history(agent, target_state)
 
     if !isnothing(index) && !(first(state_history) isa AbstractArray)
-        @error "And index was provided, but the state is not an array."
+        @error "An index was provided, but the state is not an array."
     end
 
     if isnothing(index) && first(state_history) isa AbstractArray
@@ -48,8 +48,8 @@ Plot{Plots.GRBackend() n=1}
     #Replace missings with NaNs for plotting
     state_history = replace(state_history, missing => NaN)
 
-    #The x-axis starts at 0
-    x_axis = collect(0:(length(state_history)-1))
+    #The x-axis starts at 0 and goes to the number of timesteps
+    x_axis = collect(0:agent.n_timesteps.value)
 
     xlabel --> "Timestep"
     yguide --> "$target_state"

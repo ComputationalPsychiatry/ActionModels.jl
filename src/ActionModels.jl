@@ -39,7 +39,8 @@ export set_parameters!, set_states!, set_actions!, reset!
 
 ## For fitting models ##
 export create_model
-export Regression, RegressionPrior, exp, logistic
+export Regression, RegressionPrior
+export exp, logistic, softmax #export commonly used LogExpFunctions functions
 export sample_prior!, sample_posterior!, SampleSaveResume
 export get_session_parameters!, get_state_trajectories!, summarize
 # export parameter_recovery
