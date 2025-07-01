@@ -10,7 +10,7 @@
    xml:space="preserve"
    inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
    sodipodi:docname="population_model.svg"
-   inkscape:export-filename="ActionModels.png"
+   inkscape:export-filename="population_model.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -32,7 +32,7 @@
      inkscape:window-width="1440"
      inkscape:window-height="797"
      inkscape:window-x="0"
-     inkscape:window-y="800"
+     inkscape:window-y="26"
      inkscape:window-maximized="0"
      inkscape:current-layer="layer1"
      inkscape:export-bgcolor="#ffffffff"><inkscape:page
@@ -357,7 +357,7 @@
          y="116.67414"
          ry="14.390387" /></g><g
        id="g1-0-9"
-       transform="matrix(0.48902895,0,0,0.48902895,149.91193,143.54101)"><text
+       transform="matrix(0.48902895,0,0,0.48902895,149.91193,141.9535)"><text
          xml:space="preserve"
          style="font-style:italic;font-size:15.4939px;line-height:0%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,  Italic';text-align:start;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;opacity:0.973783;fill:#f2dfb7;fill-opacity:1;stroke:none;stroke-width:2;stroke-opacity:0.890196"
          x="-99.859238"
@@ -386,7 +386,7 @@
            y="68.132751"
            id="tspan11-3-3">timesteps T</tspan></text></g><g
        id="g1-0-9-8"
-       transform="matrix(0.48902895,0,0,0.48902895,64.931504,99.432667)"><text
+       transform="matrix(0.48902895,0,0,0.48902895,64.931504,97.845166)"><text
          xml:space="preserve"
          style="font-style:italic;font-size:15.4939px;line-height:0%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman,  Italic';text-align:start;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;opacity:0.973783;fill:#f2dfb7;fill-opacity:1;stroke:none;stroke-width:2;stroke-opacity:0.890196"
          x="-109.5979"
