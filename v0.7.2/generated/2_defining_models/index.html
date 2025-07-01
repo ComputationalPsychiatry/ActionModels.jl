@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Defining models with ActionModels · ActionModels.jl</title><meta name="title" content="Defining models with ActionModels · ActionModels.jl"/><meta property="og:title" content="Defining models with ActionModels · ActionModels.jl"/><meta property="twitter:title" content="Defining models with ActionModels · ActionModels.jl"/><meta name="description" content="Documentation for ActionModels.jl."/><meta property="og:description" content="Documentation for ActionModels.jl."/><meta property="twitter:description" content="Documentation for ActionModels.jl."/><meta property="og:url" content="https://ComputationalPsychiatry.github.io/ActionModels.jl/generated/2_defining_models/"/><meta property="twitter:url" content="https://ComputationalPsychiatry.github.io/ActionModels.jl/generated/2_defining_models/"/><link rel="canonical" href="https://ComputationalPsychiatry.github.io/ActionModels.jl/generated/2_defining_models/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">ActionModels.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><span class="tocitem">Welcome to ActionModels</span><ul><li><a class="tocitem" href="../../">Welcome to ActionModels!</a></li></ul></li><li><span class="tocitem">Theory</span><ul><li><a class="tocitem" href="../../markdowns/theory/">Computational cognitive modelling</a></li><li><a class="tocitem" href="../../markdowns/references/">References</a></li></ul></li><li><span class="tocitem">User Guide</span><ul><li class="is-active"><a class="tocitem" href>Defining models with ActionModels</a><ul class="internal"><li><a class="tocitem" href="#Defining-a-classic-Gaussian-report-Rescorla-Wagner-model"><span>Defining a classic Gaussian report Rescorla-Wagner model</span></a></li><li><a class="tocitem" href="#Other-options-when-defining-action-models"><span>Other options when defining action models</span></a></li></ul></li><li><a class="tocitem" href="../3_simulation/">Simulating states and behaviour</a></li><li><a class="tocitem" href="../4_model_fitting/">Fitting action models to data</a></li><li><a class="tocitem" href="../5_population_models/">Population models</a></li><li><a class="tocitem" href="../6_workflow_tools/">Tools for Bayesian workflows</a></li><li><a class="tocitem" href="../7_using_submodels/">Using submodels</a></li><li><a class="tocitem" href="../../markdowns/debugging/">Debugging ActionModels</a></li><li><a class="tocitem" href="../../markdowns/full_API/">Full API reference</a></li></ul></li><li><span class="tocitem">Premade Models</span><ul><li><a class="tocitem" href="../rescorla_wagner/">The Rescorla-Wagner</a></li><li><a class="tocitem" href="../pvl_delta/">The PVL-Delta</a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../example_jget/">Jumping Gaussian Estimation Task</a></li><li><a class="tocitem" href="../example_igt/">Iowa Gambling Task</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">User Guide</a></li><li class="is-active"><a href>Defining models with ActionModels</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Defining models with ActionModels</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ComputationalPsychiatry/ActionModels.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ComputationalPsychiatry/ActionModels.jl/blob/main/docs/julia_files/B_user_guide/2_defining_models.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Defining-models-with-ActionModels"><a class="docs-heading-anchor" href="#Defining-models-with-ActionModels">Defining models with ActionModels</a><a id="Defining-models-with-ActionModels-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-models-with-ActionModels" title="Permalink"></a></h1><p>In this section, we will demonstrate how to define an action model with ActionModels. We will demonstrate this by first constructing a classic Rescorla-Wagner model. In the next section, we will describe the possible Various options when constructing action models, which can be relevant depending on the specific type of model. See the section on submodels REF for using custom submodels, which can be useful when creating more complex families. See the seciton on premade models REF to see the growing library of prespecified models that ActionModels provides.</p><h2 id="Defining-a-classic-Gaussian-report-Rescorla-Wagner-model"><a class="docs-heading-anchor" href="#Defining-a-classic-Gaussian-report-Rescorla-Wagner-model">Defining a classic Gaussian report Rescorla-Wagner model</a><a id="Defining-a-classic-Gaussian-report-Rescorla-Wagner-model-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-a-classic-Gaussian-report-Rescorla-Wagner-model" title="Permalink"></a></h2><p>The Rescorla-Wagner (Wagner &amp; Rescorla, 1972) model is a classic reinforcement learning model that describes how expectations about the environment are updated based on the observed outcome. It was originally used specifically for modeling how values of taking different actions are learnt in classic conditioning tasks, but has since been used in many other learning tasks. In this model, the expected observation at time <span>$t$</span> is denoted as <span>$V_t$</span>, and it is updated based on the observed outcome <span>$o_t$</span> and a learning rate <span>$\alpha$</span>, with the following equation:</p><p class="math-container">\[V_t = V_{t-1} + \alpha (o_t - V_{t-1})\]</p><p>In the Gaussian report action model, the expected value <span>$V_t$</span> is used to determine the mean of a Gaussian distribution from which the action is sampled:</p><p class="math-container">\[a_t \sim \mathcal{N}(V_t, \beta)\]</p><p>To implement this model in ActionModels, we will first define a function that carries out the update and returns a probability distribution for the action. The function should take a ModelAttributes object as its first argument, which contains the parameters, states and previous actions of the model. The observations to the model are passed as the following positional arguments. For this model, there is only a single continuous observation.</p><pre><code class="language-julia hljs">using ActionModels
+
+function rescorla_wagner(attributes::ModelAttributes, observation::Float64)
+
+    #Read in parameters and states
+    parameters = load_parameters(attributes)
+    states = load_states(attributes)
+
+    α = parameters.learning_rate
+    β = parameters.action_noise
+    Vₜ₋₁ = states.expected_value
+
+    #The Rescorla-Wagner update rule
+    Vₜ = Vₜ₋₁ + α * (observation - Vₜ₋₁)
+
+    #The updated expected value is stored to be accessed on next timestep
+    update_state!(attributes, :expected_value, Vₜ)
+
+
+    #The Gaussian report action
+    action_distribution = Normal(Vₜ, β)
+
+    return action_distribution
+end;</code></pre><p>In the first part of the function, we read in the parameters and states of the model from the model attributes. In the second part, we implement the Rescorla-Wagner update rule, which updates the expected value <span>$V_t$</span> based on the observation <span>$o_t$</span> and the learning rate <span>$\alpha$</span>. Then we store the updated <span>$V_t$</span> in the attributes. In the last part, we create a Gaussian distribution with the updated expected value <span>$V_t$</span> as mean and the action noise <span>$\beta$</span> as standard deviation, and return this as the probability distribution for the action for this timestep.</p><p>Now we specify the parameters, states, observations and actions of the model. The first two parameters are the learning rate and action noise. The value passed to the <code>Parameter()</code> constructor is the default value for the parameter. We also specify an initial state parameter, which is a parameter that sets the initial value of some state. In this case, the <code>initial_value</code> parameter controls the initial expectation <span>$V_0$</span>. Apart from the default parameter value, initial state parameters need to be given the state it is associated with as the second argument.</p><pre><code class="language-julia hljs">parameters = (
+    #The learning rate, with a default value of 0.1
+    learning_rate = Parameter(0.1),
+    #The action noise, with a default value of 1
+    action_noise = Parameter(1),
+    #And the initial expected value V₀, with a default value of 0
+    initial_value = InitialStateParameter(0, :expected_value),
+);</code></pre><p>We then specify the states of the model. There is only one state in this model, the expected value <span>$V_t$</span>, which is updated on each timestep as described above.</p><pre><code class="language-julia hljs">states = (;
+    #The expected value V, which is updated on each timestep
+    expected_value = State(),
+);</code></pre><p>Then we specify the observations and actions of the model. The observation is a single continuous observation. When specifying the action, we indicate which type of distribution the action is sampled from.</p><pre><code class="language-julia hljs">observations = (;
+    #The observation, which is passed to the model on each timestep and used to update V
+    observation = Observation()
+);
+actions = (;
+    #The report action, which reports the expected value with Gaussian noise
+    report = Action(Normal)
+);</code></pre><p>Finally, we create the model object using the <code>ActionModel</code> constructor.</p><pre><code class="language-julia hljs">action_model = ActionModel(
+    rescorla_wagner,
+    parameters = parameters,
+    states = states,
+    observations = observations,
+    actions = actions,
+)</code></pre><pre><code class="nohighlight hljs">-- ActionModel --
+Action model function: rescorla_wagner
+Number of parameters: 3
+Number of states: 1
+Number of observations: 1
+Number of actions: 1
+</code></pre><h2 id="Other-options-when-defining-action-models"><a class="docs-heading-anchor" href="#Other-options-when-defining-action-models">Other options when defining action models</a><a id="Other-options-when-defining-action-models-1"></a><a class="docs-heading-anchor-permalink" href="#Other-options-when-defining-action-models" title="Permalink"></a></h2><h3 id="Multiple-actions-and-observations"><a class="docs-heading-anchor" href="#Multiple-actions-and-observations">Multiple actions and observations</a><a id="Multiple-actions-and-observations-1"></a><a class="docs-heading-anchor-permalink" href="#Multiple-actions-and-observations" title="Permalink"></a></h3><p>It is possible for action models to have multiple observations or multiple actions. Multiple observations just have to be specified as additional arguments in the action model function. Multiple actions just need to be returned as a tuple from the action model function. In both cases, multiple observations and actions need to be specified when constructing the <code>ActionModel</code> object.</p><pre><code class="language-julia hljs">#Dummy example function with multiple observations and actions
+function example_actionmodel(
+    attributes::ModelAttributes,
+    first_observation::Float64,
+    second_observation::Int64,
+)
+
+    #Model definition not shown here
+
+    #Two example actions sampled from a Gaussian and a Bernoulli distribution
+    first_action_distribution = Normal(0, 1)
+    second_action_distribution = Bernoulli(0.5)
+
+    return (first_action_distribution, second_action_distribution)
+end
+
+observations =
+    (; first_observation = Observation(), second_observation = Observation(discrete = true));
+actions = (; first_action = Action(Normal), second_action = Action(Bernoulli));
+
+#ActionModel object creation not shown here</code></pre><h3 id="Types-of-parameters,-actions,-observations-and-states"><a class="docs-heading-anchor" href="#Types-of-parameters,-actions,-observations-and-states">Types of parameters, actions, observations and states</a><a id="Types-of-parameters,-actions,-observations-and-states-1"></a><a class="docs-heading-anchor-permalink" href="#Types-of-parameters,-actions,-observations-and-states" title="Permalink"></a></h3><p>Observations and states can be of any type, and their type can be passed to the respective constructors, or the <code>discrete</code> keyword argument can be set to <code>true</code> to indicate that the observation or state is discrete. Parameters and actions need to be a subtype of Real, however; i.e., either discrete or continuous. By default, they are continuous. Parameters can be specified to be discrete when defining them; action types are automatically inferred from the distribution type specified in the <code>Action()</code> constructor. Both actions and parameters can also be multivariate, i.e., they can be vectors or matrices. To specfiy a multivariate parameter, just specify an array as the default value in the <code>Parameter()</code> constructor. To specify a multivariate action, just specify a multivariate distribution in the <code>Action()</code> constructor. Note that states will have <code>missing</code> as their initial value if an initial value is not passed to the <code>State()</code> constructor and an InitialStateParameter is not specified.</p><pre><code class="language-julia hljs">parameters = (
+    #A discrete parameter with a default value of 0
+    discrete_parameter = Parameter(0, discrete = true),
+    #A multivariate parameter with a default value of [0, 0]
+    multivariate_parameter = Parameter([0, 0]),
+);
+
+actions = (
+    #A discrete action sampled from a Bernoulli distribution
+    discrete_action = Action(Bernoulli),
+    #A multivariate action sampled from a multivariate normal distribution
+    multivariate_action = Action(MvNormal),
+    #If different types of distributiosn can be used, it is possible to specify an abstract type of distribution.
+    multivariate_action_2 = Action(Distribution{Multivariate,Continuous}),
+);</code></pre><h3 id="Depending-on-previous-actions"><a class="docs-heading-anchor" href="#Depending-on-previous-actions">Depending on previous actions</a><a id="Depending-on-previous-actions-1"></a><a class="docs-heading-anchor-permalink" href="#Depending-on-previous-actions" title="Permalink"></a></h3><p>Some models can depend on previous actions. Similar to how parameters and states are loaded within the action model function, previous actions can be loaded using the <code>load_actions()</code> function. If there are multiple actions, the previous actions are returned as a named tuple.</p><pre><code class="language-julia hljs">#Dummy example function with multiple observations and actions
+function example_actionmodel(attributes::ModelAttributes, observation::Float64)
+
+    #Load previous actions
+    prev_actions = load_actions(attributes)
+
+    first_action = prev_actions.first_action
+    second_action = prev_actions.second_action
+
+    #Rest of model definition not shown here
+
+    #The first action is sampled from a distribution that depends on the previous action
+    first_action_distribution = Normal(first_action, 1)
+    second_action_distribution = Bernoulli(0.5)
+
+    return (first_action_distribution, second_action_distribution)
+end;</code></pre><h3 id="Custom-conditions-for-parameter-rejection"><a class="docs-heading-anchor" href="#Custom-conditions-for-parameter-rejection">Custom conditions for parameter rejection</a><a id="Custom-conditions-for-parameter-rejection-1"></a><a class="docs-heading-anchor-permalink" href="#Custom-conditions-for-parameter-rejection" title="Permalink"></a></h3><p>Finally, it can in some cases be useful to have a custom condition where the model is not defined, so that parameter estimation can avoid parameter regions that result in this condition happening. Notably, this slows down inference, and is not recommended unless necessary. This can be done by throwing the specific error type RejectParameters within the action model function, which is then handled appropriately by the inference algorithm.</p><pre><code class="language-julia hljs">#Dummy example function with custom parameter rejection
+function example_actionmodel(attributes::ModelAttributes, observation::Float64)
+
+    if somecondition
+        #If the condition is met, throw a ParameterRejectionError
+        throw(RejectParameters(&quot;The model is not defined for this parameter set&quot;))
+    end
+
+    #Rest of model definition not shown here#
+end;</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../markdowns/references/">« References</a><a class="docs-footer-nextpage" href="../3_simulation/">Simulating states and behaviour »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Tuesday 1 July 2025 19:02">Tuesday 1 July 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
