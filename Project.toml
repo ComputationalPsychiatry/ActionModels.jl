@@ -1,7 +1,7 @@
 name = "ActionModels"
 uuid = "320cf53b-cc3b-4b34-9a10-0ecb113566a3"
 authors = ["Peter Thestrup Waade ptw@cas.au.dk", "Luke Ring luke@cas.au.dk", "Malte Lau Møller", "Christoph Mathys chmathys@cas.au.dk"]
-version = "0.7.1"
+version = "0.7.2"
 
 [deps]
 ADTypes = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
