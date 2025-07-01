@@ -342,8 +342,8 @@ end
 function create_session_model(
     impute_missing_actions::AbstractMissingActions,
     check_parameter_rejections::Val{true},         #With parameter rejections
-    actions::Vector{Vector{A}},
-) where {A<:Tuple{Vararg{Real}}}
+    actions::Vector{Vector{AA}},
+) where {A<:Union{Real,Missing},AA<:Tuple{Vararg{Union{Array{A},A}}}}
 
     #Get normal session model
     session_submodel = create_session_model(impute_missing_actions, Val{false}(), actions)
@@ -353,10 +353,15 @@ function create_session_model(
         model_attributes::ModelAttributes,
         parameters_per_session::T, #No way to type for an iterator
         observations_per_session::Vector{Vector{O}},
-        actions_per_session::Vector{Vector{A}},
+        actions_per_session::Vector{Vector{AA}},
         estimated_parameter_names::Tuple{Vararg{Symbol}},
         session_ids::Vector{String},
-    ) where {O<:Tuple{Vararg{Any}},A<:Tuple{Vararg{Real}},T<:Any}
+    ) where {
+        O<:Tuple{Vararg{Any}},
+        A<:Union{Missing,Real},
+        AA<:Tuple{Vararg{Union{Array{A},A}}},
+        T<:Any,
+    }
 
         try
 

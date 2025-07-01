@@ -364,7 +364,7 @@ model_function = function rescorla_wagner_bernoulli_report(
     β = parameters.action_noise
 
     #Transform the action noise into a precision (or inverse noise)
-    β = 1 / β
+    β⁻¹ = 1 / β
 
     #Extract Rescorla-Wagner submodel
     rescorla_wagner = attributes.submodel
@@ -375,8 +375,8 @@ model_function = function rescorla_wagner_bernoulli_report(
     #Extract the expected value from the Rescorla-Wagner submodel
     Vₜ = rescorla_wagner.expected_value
 
-    #Transform the expected value with a logistic function to get the action probability, weighted by the action precision β
-    action_probability = logistic(Vₜ * β)
+    #Transform the expected value with a logistic function to get the action probability, weighted by the action precision β⁻¹
+    action_probability = logistic(Vₜ * β⁻¹)
 
     #Return the action distribution, which is a Bernoulli distribution with the action probability as parameter
     action_distribution = Bernoulli(action_probability)
@@ -446,7 +446,7 @@ model_function = function rescorla_wagner_categorical_report(
     β = parameters.action_noise
 
     #Transform the action noise into a precision (or inverse noise)
-    β = 1 / β
+    β⁻¹ = 1 / β
 
     #Extract Rescorla-Wagner submodel
     rescorla_wagner = attributes.submodel
@@ -457,8 +457,8 @@ model_function = function rescorla_wagner_categorical_report(
     #Extract the vector of expected values from the Rescorla-Wagner submodel
     Vₜ = rescorla_wagner.expected_value
 
-    #Transform the expected value with a logistic function to get the action probability, weighted by the action precision β
-    action_probabilities = softmax(Vₜ .* β)
+    #Transform the expected value with a logistic function to get the action probability, weighted by the action precision β⁻¹
+    action_probabilities = softmax(Vₜ .* β⁻¹)
 
     #Return the action distribution, which is a Bernoulli distribution with the action probability as parameter
     action_distribution = Categorical(action_probabilities)

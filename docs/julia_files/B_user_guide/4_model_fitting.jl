@@ -115,25 +115,6 @@ chns = sample_posterior!(
     resample = true,
 );
 
-# ActionModels also provides functionality for saving segments of a chain and then resuming during sampling, so that long sampling runs can be interrupted and resumed later.
-# This is done with passing a `SampleSaveResume` object to the `save_resume` keyword argument.
-# The `save_every` keyword argument can be used to specify how often the chains should be saved to disk, and the path keyword argument specifies where the chains should be saved.
-# Chains are saved with a prefix (by default `ActionModels_chain_segment`) and a suffix that contains the chain and segment number.
-# NOTE: this feature is currently experimental, and may change in the future. USe with care.
-
-ActionModels_path = dirname(dirname(pathof(ActionModels))) #hide
-docs_path = joinpath(ActionModels_path, "docs") #hide
-
-chns = sample_posterior!(
-    model,
-    save_resume = SampleSaveResume(
-        path = joinpath(docs_path, ".samplingstate"),
-        save_every = 200,
-    ),
-    n_samples = 600,
-    resample = true,
-);
-
 # Finally, some users may wish to use Turing's own interface for sampling from the posterior instead.
 # The Turing inferface is more flexible in general, but requires more boilerplate code to set up.
 # For this case, the `ActionModels.ModelFit` objects contains the Turing model that is used under the hood. Users can extract and use it as any other Turing model, if they wish.

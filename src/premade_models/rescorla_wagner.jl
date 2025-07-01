@@ -550,8 +550,8 @@ struct RescorlaWagner <: AbstractPremadeModel
                 response_model = function bernoulli_report(attributes::ModelAttributes)
                     rescorla_wagner = attributes.submodel
                     Vₜ = rescorla_wagner.expected_value
-                    β = 1/load_parameters(attributes).action_noise
-                    return Bernoulli(logistic(Vₜ * β))
+                    β⁻¹ = 1/load_parameters(attributes).action_noise
+                    return Bernoulli(logistic(Vₜ * β⁻¹))
                 end
 
                 response_model_observations = (; observation = Observation(Int64))
@@ -562,8 +562,8 @@ struct RescorlaWagner <: AbstractPremadeModel
                 response_model = function categorical_report(attributes::ModelAttributes)
                     rescorla_wagner = attributes.submodel
                     Vₜ = rescorla_wagner.expected_value
-                    β = 1/load_parameters(attributes).action_noise
-                    return Categorical(softmax(Vₜ .* β))
+                    β⁻¹ = 1/load_parameters(attributes).action_noise
+                    return Categorical(softmax(Vₜ .* β⁻¹))
                 end
 
                 response_model_observations = (; observation = Observation(Int64))

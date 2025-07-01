@@ -58,7 +58,7 @@ function ActionModel(config::PVLDelta)
             α = parameters.learning_rate
             A = parameters.reward_sensitivity
             w = parameters.loss_aversion
-            β = 1 / parameters.action_noise
+            β⁻¹ = 1 / parameters.action_noise
 
             Ev = states.expected_value
 
@@ -85,7 +85,7 @@ function ActionModel(config::PVLDelta)
 
             ## Get action probabilities ##
             #Softmax over expected values for each option
-            action_probabilities = softmax(Ev * β)
+            action_probabilities = softmax(Ev * β⁻¹)
 
             #Avoid underflow and overflow
             action_probabilities = clamp.(action_probabilities, 0.001, 0.999)
@@ -109,14 +109,14 @@ function ActionModel(config::PVLDelta)
             α = parameters.learning_rate
             A = parameters.reward_sensitivity
             w = parameters.loss_aversion
-            β = 1 / parameters.action_noise
+            β⁻¹ = 1 / parameters.action_noise
 
             Ev = states.expected_value
 
 
             ## Get action probabilities ##
             #Softmax over expected values for each option
-            action_probabilities = softmax(Ev * β)
+            action_probabilities = softmax(Ev * β⁻¹)
 
             #Avoid underflow and overflow
             action_probabilities = clamp.(action_probabilities, 0.001, 0.999)
