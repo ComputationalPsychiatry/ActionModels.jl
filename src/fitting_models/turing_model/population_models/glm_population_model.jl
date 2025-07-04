@@ -109,12 +109,19 @@ function create_model(
 
     ## Create population data ##
     #Remove action and observation columns
-    population_data = data[!,setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
-    #Only one row per session
-    population_data = unique(population_data, session_cols)
-    #Sort population data by session columns
-    population_data = sort(population_data, session_cols)
-    
+    population_data =
+        data[!, setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
+    #If there are session columns
+    if length(session_cols) > 0
+        #Only one row per session
+        population_data = unique(population_data, session_cols)
+        #Sort population data by session columns
+        population_data = sort(population_data, session_cols)
+    else
+        #If there are no session columns, just take the first row
+        population_data = population_data[1:1, :]
+    end
+
     #Extract number of sessions
     n_sessions = nrow(population_data)
 

@@ -179,14 +179,20 @@ function create_model(
     ## Create population data ##
     #Remove action and observation columns
     population_data = data[!,setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
-    #Only one row per session
-    population_data = unique(population_data, session_cols)
-    #Sort population data by session columns
-    population_data = sort(population_data, session_cols)
+    #If there are session columns
+    if length(session_cols) > 0
+        #Only one row per session
+        population_data = unique(population_data, session_cols)
+        #Sort population data by session columns
+        population_data = sort(population_data, session_cols)
+    else
+        #If there are no session columns, just take the first row
+        population_data = population_data[1:1, :]
+    end
 
     ## Create sessions data ##
     #Only keep actions, observations and session columns
-    sessions_data = data[!, vcat(collect(observation_cols), collect(action_cols), session_cols)]
+    sessions_data = data[!, unique(vcat(collect(observation_cols), collect(action_cols), session_cols))]
     #Group sessions data by session columns
     sessions_data = groupby(sessions_data, session_cols, sort = true)
 
@@ -230,15 +236,6 @@ function create_model(
         session_ids,
         initial_states,
     )
-
-    ## Extract population data ##
-    if length(session_cols) == 0
-        #If there are no session columns, the population data is the same as the data
-        population_data = data[1:1, :]
-    else
-        #Otherwise, extract the population data from the grouped data
-        population_data = unique(data, session_cols)
-    end
 
     return ModelFit(
         model = model,
