@@ -88,6 +88,12 @@ function create_model(
         regressions = F[regressions]
     end
 
+    #If only a symbol was specified for session cols
+    if session_cols isa Symbol
+        #Convert single session column to vector
+        session_cols = [session_cols]
+    end
+
     #Make sure that single formulas are made into Regression objects
     regressions = [
         regression isa Regression ? regression : Regression(regression) for
@@ -107,8 +113,21 @@ function create_model(
         kwargs...,
     )
 
-    #Extract just the data needed for the linear regression
-    population_data = unique(data, session_cols)
+    ## Create population data ##
+    #Remove action and observation columns
+    population_data =
+        data[!, setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
+    #If there are session columns
+    if length(session_cols) > 0
+        #Only one row per session
+        population_data = unique(population_data, session_cols)
+        #Sort population data by session columns
+        population_data = sort(population_data, session_cols)
+    else
+        #If there are no session columns, just take the first row
+        population_data = population_data[1:1, :]
+    end
+
     #Extract number of sessions
     n_sessions = nrow(population_data)
 
