@@ -175,9 +175,20 @@ function create_model(
         state_name => state.initial_value for
         (state_name, state) in pairs(action_model.states)
     )
+        
+    ## Create population data ##
+    #Remove action and observation columns
+    population_data = data[!,setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
+    #Only one row per session
+    population_data = unique(population_data, session_cols)
+    #Sort population data by session columns
+    population_data = sort(population_data, session_cols)
 
-    ## Group data by sessions ##
-    grouped_data = groupby(data, session_cols)
+    ## Create sessions data ##
+    #Only keep actions, observations and session columns
+    sessions_data = data[!, vcat(collect(observation_cols), collect(action_cols), session_cols)]
+    #Group sessions data by session columns
+    sessions_data = groupby(sessions_data, session_cols, sort = true)
 
     ## Create IDs for each session ##
     session_ids = [
@@ -186,18 +197,18 @@ function create_model(
                 string(col_name) * id_column_separator * string(first(subdata)[col_name]) for col_name in session_cols
             ],
             id_separator,
-        ) for subdata in grouped_data
+        ) for subdata in sessions_data
     ]
 
     ## Extract observations and actions ##
     observations = Vector{Tuple{observation_types_data...}}[
         Tuple{observation_types_data...}.(
             eachrow(session_data[!, collect(observation_cols)]),
-        ) for session_data in grouped_data
+        ) for session_data in sessions_data
     ]
     actions = Vector{Tuple{action_types_data...}}[
         Tuple{action_types_data...}.(eachrow(session_data[!, collect(action_cols)])) for
-        session_data in grouped_data
+        session_data in sessions_data
     ]
 
     ### CREATE MODEL ###

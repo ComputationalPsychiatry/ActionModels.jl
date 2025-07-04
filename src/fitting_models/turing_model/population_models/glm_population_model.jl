@@ -107,8 +107,14 @@ function create_model(
         kwargs...,
     )
 
-    #Extract just the data needed for the linear regression
-    population_data = unique(data, session_cols)
+    ## Create population data ##
+    #Remove action and observation columns
+    population_data = data[!,setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
+    #Only one row per session
+    population_data = unique(population_data, session_cols)
+    #Sort population data by session columns
+    population_data = sort(population_data, session_cols)
+    
     #Extract number of sessions
     n_sessions = nrow(population_data)
 
