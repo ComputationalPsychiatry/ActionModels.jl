@@ -88,6 +88,12 @@ function create_model(
         regressions = F[regressions]
     end
 
+    #If only a symbol was specified for session cols
+    if session_cols isa Symbol
+        #Convert single session column to vector
+        session_cols = [session_cols]
+    end
+
     #Make sure that single formulas are made into Regression objects
     regressions = [
         regression isa Regression ? regression : Regression(regression) for
