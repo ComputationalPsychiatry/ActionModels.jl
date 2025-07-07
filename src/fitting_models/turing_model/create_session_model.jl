@@ -5,7 +5,7 @@ function create_session_model(
     impute_missing_actions::NoMissingActions,    #No missing actions
     check_parameter_rejections::Val{false},     #No parameter rejections
     actions::Vector{Vector{AA}},
-) where {A<:Real,AA<:Tuple{Vararg{Union{Array{A},A}}}}
+) where {A<:Any,AA<:Tuple{Vararg{Union{Array{A},A}}}}
 
     #Create flattened actions
     flattened_actions = evert(collect(Iterators.flatten(actions)))
@@ -21,7 +21,7 @@ function create_session_model(
     @model function sample_actions_one_idx(
         actions::Array{AA},
         distributions::Vector{D},
-    ) where {A<:Real,AA<:Union{A,Array{A}},D<:Distribution}
+    ) where {A<:Any,AA<:Union{A,Array{A}},D<:Distribution}
 
         actions ~ arraydist(distributions)
     end
@@ -38,7 +38,7 @@ function create_session_model(
         flattened_actions::Tuple{Vararg{Array{FA}}} = flattened_actions,
     ) where {
         O<:Tuple{Vararg{Any}},
-        A<:Real,
+        A<:Any,
         AA<:Tuple{Vararg{Union{Array{A},A}}},
         FA<:Union{Array{A},A},
         T,
@@ -92,7 +92,7 @@ function create_session_model(
     impute_missing_actions::AbstractMissingActions,
     check_parameter_rejections::Val{false},
     actions::Vector{Vector{AA}},
-) where {A<:Union{Missing,Real},AA<:Tuple{Vararg{Union{Array{A},A}}}}
+) where {A<:Union{Missing,Any},AA<:Tuple{Vararg{Union{Array{A},A}}}}
 
     ## Submodel for sampling all actions of a single action idx as an arraydist ##
     @model function sample_actions_one_idx(
@@ -158,7 +158,7 @@ function create_session_model(
         flattened_actions::Tuple{Vararg{Array{FA}}} = flattened_actions,
     ) where {
         O<:Tuple{Vararg{Any}},
-        A<:Union{Missing,Real},
+        A<:Union{Missing,Any},
         AA<:Tuple{Vararg{Union{Array{A},A}}},
         T<:Any,
         FA<:Union{Array{A},A},
@@ -228,7 +228,7 @@ end
     session_missing_action_markers::Vector{AbstractMissingActions},
 ) where {
     O<:Tuple{Vararg{Any}},
-    A<:Union{Missing,Real},
+    A<:Union{Missing,Any},
     AA<:Tuple{Vararg{Union{Array{A},A}}},
     T<:Tuple,
 }
@@ -267,7 +267,7 @@ end
     observation::O,
     action::Tuple{Vararg{AA}},
     missing_actions::NoMissingActions,      #No missing actions
-) where {O,A<:Real,AA<:Union{Array{A},A}}
+) where {O,A<:Any,AA<:Union{Array{A},A}}
     #Give observation and get action distribution
     action_distribution = action_model.action_model(model_attributes, observation...)
 
@@ -284,7 +284,7 @@ end
     observation::O,
     action::Tuple{Vararg{Union{Missing,A,Array{A}}}},
     missing_actions::SkipMissingActions,    #Skip missing actions
-) where {O,A<:Union{Missing,Real}}
+) where {O,A<:Union{Missing,Any}}
     #Give observation and get action distribution
     action_distribution = action_model.action_model(model_attributes, observation...)
 
@@ -298,7 +298,7 @@ end
     observation::O,
     actions::Tuple{Vararg{Union{Missing,A,Array{A}}}},
     missing_actions::InferMissingActions,   #Infer missing actions
-) where {O,A<:Union{Missing,Real}}
+) where {O,A<:Union{Missing,Any}}
 
     #Get the tuple of action distributions from the action model
     action_distributions = action_model.action_model(model_attributes, observation...)
@@ -328,7 +328,7 @@ end
 @model function sample_subaction(
     action::Union{Missing,A,Array{A}},
     action_distribution::D,
-) where {A<:Union{Real,Missing},D<:Distribution}
+) where {A<:Union{Any,Missing},D<:Distribution}
     action ~ action_distribution
 
     return action
@@ -343,7 +343,7 @@ function create_session_model(
     impute_missing_actions::AbstractMissingActions,
     check_parameter_rejections::Val{true},         #With parameter rejections
     actions::Vector{Vector{AA}},
-) where {A<:Union{Real,Missing},AA<:Tuple{Vararg{Union{Array{A},A}}}}
+) where {A<:Union{Any,Missing},AA<:Tuple{Vararg{Union{Array{A},A}}}}
 
     #Get normal session model
     session_submodel = create_session_model(impute_missing_actions, Val{false}(), actions)
@@ -358,7 +358,7 @@ function create_session_model(
         session_ids::Vector{String},
     ) where {
         O<:Tuple{Vararg{Any}},
-        A<:Union{Missing,Real},
+        A<:Union{Missing,Any},
         AA<:Tuple{Vararg{Union{Array{A},A}}},
         T<:Any,
     }

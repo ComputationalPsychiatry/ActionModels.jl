@@ -112,14 +112,14 @@ end
 function store_action!(
     model_attributes::ModelAttributes,
     sampled_action::Union{A,Array{A}},
-) where {A<:Real}
+) where {A<:Any}
     first(model_attributes.actions).value = sampled_action
 end
 #Store a set of actions from one timestep - used in model fitting and simulation
 function store_action!(
     model_attributes::ModelAttributes,
     sampled_actions::Tuple{Vararg{Union{A,Array{A}}}},
-) where {A<:Real}
+) where {A<:Any}
     for (action, sampled_action) in zip(model_attributes.actions, sampled_actions)
         action.value = sampled_action
     end

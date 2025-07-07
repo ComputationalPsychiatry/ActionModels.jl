@@ -42,7 +42,7 @@ function create_model(
 ) where {
     O<:Any,
     OO<:Union{O,Tuple{Vararg{O}}},
-    A<:Union{Missing,Real},
+    A<:Union{Missing,Any},
     AA<:Union{A,Tuple{Vararg{Union{Missing,A}}}},
     prior_names,
 }

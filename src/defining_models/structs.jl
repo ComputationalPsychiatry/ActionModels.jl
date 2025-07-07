@@ -308,6 +308,11 @@ function get_action_type(
 ) where {T<:Distribution{Multivariate,Discrete}}
     return Array{Int64}
 end
+function get_action_type(
+    action_dist_type::Type{T},
+) where {T<:Distribution}
+    return Any
+end
 
 
 ## Supertype for submodels ##

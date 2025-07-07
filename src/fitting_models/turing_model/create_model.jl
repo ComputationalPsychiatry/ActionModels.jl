@@ -266,7 +266,7 @@ end
     ::Type{TI} = Int64,
 ) where {
     O<:Tuple{Vararg{Any}},
-    A<:Union{Missing,Real},
+    A<:Union{Missing,Any},
     AA<:Tuple{Vararg{Union{A,Array{A}}}},
     initial_state_keys,
     TF,
@@ -392,9 +392,9 @@ function check_model(
                 throw(ArgumentError("There are NaN values in the action column $colname"))
             end
         else
-            if any(isnan.(skipmissing(data[!, colname])))
-                throw(ArgumentError("There are NaN values in the action column $colname"))
-            end
+            # if any(isnan.(skipmissing(data[!, colname])))
+            #     throw(ArgumentError("There are NaN values in the action column $colname"))
+            # end
         end
     end
 end

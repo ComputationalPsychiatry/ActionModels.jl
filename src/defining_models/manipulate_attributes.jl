@@ -61,7 +61,7 @@ function set_actions!(
     model_attributes::ModelAttributes,
     action_name::Symbol,
     action::A,
-) where {A<:Real}
+) where {A<:Any}
     model_attributes.actions[action_name].value = action
     return nothing
 end
