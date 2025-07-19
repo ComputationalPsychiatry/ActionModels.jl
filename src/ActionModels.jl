@@ -7,6 +7,7 @@ using Reexport
 using Turing: DynamicPPL, AbstractMCMC, LogDensityProblems
 
 using RecipesBase #For defining plots
+using KernelDensity, StatsBase, Plots, Measures #For the session parameters plot (get rid of Plots! and Measures if possible)
 using DataFrames #For the input format to create_model
 using AxisArrays #For storing session parameters and state trajectories
 using StatsModels, MixedModels, LogExpFunctions #For the GLM population Model
@@ -39,13 +40,14 @@ export set_parameters!, set_states!, set_actions!, reset!
 
 ## For fitting models ##
 export create_model
-export Regression, RegressionPrior
+export Regression, RegressionPrior, @formula
 export exp, logistic, softmax #export commonly used LogExpFunctions functions
 export sample_prior!, sample_posterior!, SampleSaveResume
-export get_session_parameters!, get_state_trajectories!, summarize
+export NoMissingActions, SkipMissingActions, InferMissingActions
+export ParameterChecking, NoParameterChecking
+export get_session_parameters!, get_state_trajectories!, summarize  
 # export parameter_recovery
 # export plot_parameters, plot_trajectories
-export @formula
 
 
 
@@ -75,8 +77,10 @@ include(joinpath("simulation", "plots", "plot_trajectory.jl"))
 ### Functions for fitting models ###
 include(joinpath("fitting_models", "prints.jl"))
 include(joinpath("fitting_models", "turing_model", "create_model.jl"))
-include(joinpath("fitting_models", "turing_model", "create_session_model.jl"))
 include(joinpath("fitting_models", "turing_model", "helper_functions.jl"))
+include(joinpath("fitting_models", "turing_model", "sessions_models", "parameter_checking.jl"))
+include(joinpath("fitting_models", "turing_model", "sessions_models", "pointwise_sessions_model.jl"))
+include(joinpath("fitting_models", "turing_model", "sessions_models", "fast_sessions_model.jl"))
 include(
     joinpath(
         "fitting_models",
@@ -107,11 +111,12 @@ include(joinpath("fitting_models", "inference", "get_session_parameters!.jl"))
 include(joinpath("fitting_models", "inference", "get_state_trajectories.jl"))
 include(joinpath("fitting_models", "inference", "summarize.jl"))
 include(joinpath("fitting_models", "tools", "parameter_recovery.jl"))
-include(joinpath("fitting_models", "plots", "plotting_infrastructure.jl"))
-include(joinpath("fitting_models", "plots", "plot_parameters_single_session.jl"))
-include(joinpath("fitting_models", "plots", "plot_parameters_all_sessions.jl"))
-include(joinpath("fitting_models", "plots", "plot_trajectories_single_session.jl"))
-include(joinpath("fitting_models", "plots", "plot_trajectories_all_sessions.jl"))
+include(joinpath("fitting_models", "plots", "session_parameter_plot.jl"))
+# include(joinpath("fitting_models", "plots", "plotting_infrastructure.jl"))
+# include(joinpath("fitting_models", "plots", "plot_parameters_single_session.jl"))
+# include(joinpath("fitting_models", "plots", "plot_parameters_all_sessions.jl"))
+# include(joinpath("fitting_models", "plots", "plot_trajectories_single_session.jl"))
+# include(joinpath("fitting_models", "plots", "plot_trajectories_all_sessions.jl"))
 
 ### Premade model library ###
 include(joinpath("premade_models", "rescorla_wagner.jl"))

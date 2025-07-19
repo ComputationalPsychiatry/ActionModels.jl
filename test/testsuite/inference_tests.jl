@@ -551,7 +551,7 @@ using StatsPlots
                     observation_cols = observation_cols,
                     action_cols = action_cols,
                     session_cols = session_cols,
-                    check_parameter_rejections = true,
+                    parameter_rejections = ParameterChecking(),
                 )
 
                 #Fit model
@@ -595,7 +595,7 @@ using StatsPlots
                     observation_cols = observation_cols,
                     action_cols = action_cols,
                     session_cols = session_cols,
-                    check_parameter_rejections = true,
+                    parameter_rejections = ParameterChecking(),
                 )
 
                 #Fit model
@@ -722,7 +722,6 @@ using StatsPlots
                     observation_cols = observation_cols,
                     action_cols = action_cols,
                     session_cols = session_cols,
-                    check_parameter_rejections = true,
                 )
 
                 #Fit model
@@ -979,7 +978,7 @@ using StatsPlots
                     observation_cols = observation_cols,
                     action_cols = action_cols,
                     session_cols = session_cols,
-                    impute_missing_actions = true,
+                    missing_actions = InferMissingActions(),
                 )
 
                 #Fit model

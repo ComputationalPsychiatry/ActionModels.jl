@@ -2,7 +2,7 @@
 ### FUNCTION FOR CREATING A CONDITIONED TURING MODEL FROM AN AGENT, A DATAFRAME AND A POPULATION MODEL ###
 ##########################################################################################################
 """
-    create_model(action_model::ActionModel, population_model::DynamicPPL.Model, data::DataFrame; observation_cols, action_cols, session_cols=Vector{Symbol}(), parameters_to_estimate, impute_missing_actions=false, check_parameter_rejections=false, population_model_type=CustomPopulationModel(), verbose=true)
+    create_model(action_model::ActionModel, population_model::DynamicPPL.Model, data::DataFrame; observation_cols, action_cols, session_cols=Vector{Symbol}(), parameters_to_estimate, missing_actions=NoMissingActions(), parameter_rejections=NoParameterChecking(), population_model_type=CustomPopulationModel(), verbose=true)
 
 Create a `ModelFit` structure that can be used for sampling posterior and prior probability distributions. Consists of an action model, a population model, and a dataset.
 
@@ -10,14 +10,14 @@ This function prepares the data, checks consistency with the action and populati
 
 # Arguments
 - `action_model::ActionModel`: The action model to fit.
-- `population_model::DynamicPPL.Model`: The population model (e.g. a Turing model that generated parameters for each session).
+- `population_model::DynamicPPL.Model`: The population model (e.g. a Turing model that generates parameters for each session).
 - `data::DataFrame`: The dataset containing observations, actions, and session/grouping columns.
 - `observation_cols`: Columns in `data` for observations. Can be a `NamedTuple`, `Vector{Symbol}`, or `Symbol`.
 - `action_cols`: Columns in `data` for actions. Can be a `NamedTuple`, `Vector{Symbol}`, or `Symbol`.
 - `session_cols`: Columns in `data` identifying sessions/groups (default: empty vector).
 - `parameters_to_estimate`: Tuple of parameter names to estimate.
-- `impute_missing_actions`: Whether to impute missing actions (default: `false`).
-- `check_parameter_rejections`: Whether to check for parameter rejections (default: `false`).
+- `missing_actions`: Strategy for handling missing actions (default: `NoMissingActions()`). Use `SkipMissingActions()` to skip, or `InferMissingActions()` to infer missing actions.
+- `parameter_rejections`: Strategy for handling parameter rejection errors (default: `NoParameterChecking()`). Use `ParameterChecking()` to enable rejecting samples.
 - `population_model_type`: Type of population model (default: `CustomPopulationModel()`).
 - `verbose`: Whether to print warnings and info (default: `true`).
 
@@ -26,7 +26,7 @@ This function prepares the data, checks consistency with the action and populati
 
 # Example
 ```jldoctest; setup = :(using ActionModels, DataFrames; data = DataFrame("id" => ["S1", "S1", "S2", "S2"], "observation" => [0.1, 0.2, 0.3, 0.4], "action" => [0.1, 0.2, 0.3, 0.4]); action_model = ActionModel(RescorlaWagner()); population_model = @model function testmodel(population_args...) learning_rate ~ LogitNormal() end; population_model = population_model();)
-julia> model = create_model(action_model, population_model, data; action_cols = :action, observation_cols = :observation, session_cols = :id, parameters_to_estimate = (:learning_rate,));
+julia> model = create_model(action_model, population_model, data; action_cols = :action, observation_cols = :observation, session_cols = :id, parameters_to_estimate = (:learning_rate,), missing_actions=NoMissingActions(), parameter_rejections=NoParameterChecking());
 
 julia> model isa ActionModels.ModelFit
 true
@@ -34,7 +34,8 @@ true
 
 # Notes
 - The returned `ModelFit` object can be used with `sample_posterior!`, `sample_prior!`, and other inference utilities.
-- Handles missing actions according to the `impute_missing_actions` argument.
+- Handles missing actions according to the `missing_actions` argument.
+- Checks for parameter rejection errors according to the `parameter_rejections` argument.
 - Checks that columns and types in `data` match the action model specification.
 """
 function create_model(
@@ -53,9 +54,10 @@ function create_model(
     },
     session_cols::Union{Vector{Symbol},Symbol} = Vector{Symbol}(),
     parameters_to_estimate::Tuple{Vararg{Symbol}},
-    impute_missing_actions::Bool = false,
-    check_parameter_rejections::Bool = false,
+    missing_actions::AbstractMissingActions = NoMissingActions(),
+    parameter_rejections::AbstractCheckParameterRejectionsMarker = NoParameterChecking(),
     population_model_type::AbstractPopulationModel = CustomPopulationModel(),
+    sessions_model_type::AbstractSessionModel = FastSessionModel(),
     verbose::Bool = true,
 ) where {observation_names_cols,action_names_cols}
 
@@ -114,33 +116,32 @@ function create_model(
     end
 
     ## Check whether to skip or infer missing data ##
-    if !impute_missing_actions
-        #If there are no missing actions
-        if !any(ismissing, Matrix(data[!, collect(action_cols)]))
-            #Remove any potential Missing type
-            disallowmissing!(data, collect(action_cols))
-            impute_missing_actions = NoMissingActions()
+    #If there are no missing actions
+    if missing_actions isa NoMissingActions
+
+        #If there are missing actions
+        if any(ismissing, Matrix(data[!, collect(action_cols)]))
+            throw(
+                ArgumentError(
+                    """
+                    There are missing values in the action columns, but no strategy for handling them is specified.
+                    Set missing_actions to SkipMissingActions() to skip these actions during model fitting, in which case they will be stored as missing values in the model attributes.
+                    Set missing_actions to InferMissingActions() to treat these actions as latent variables and infer them during model fitting.
+                    """,
+                ),
+            )
+
         else
-            if verbose
-                @warn """
-                      There are missing values in the action columns, but impute_missing_actions is set to false. 
-                      These actions will not be used to inform parameter estimation, and will be passed to the action model as missing values. 
-                      Check that this is desired behaviour. This can be a problem for models which depend on their previous actions.
-                      """
-            end
-            impute_missing_actions = SkipMissingActions()
+            #Remove any potential Missing types in the data
+            disallowmissing!(data, collect(action_cols))
         end
-    else
+    end
+
+    #If missing_actions are set to be skipped or inferred
+    if (missing_actions isa SkipMissingActions || missing_actions isa InferMissingActions)
         #If there are no missing actions
         if !any(ismissing, Matrix(data[!, collect(action_cols)]))
-            if verbose
-                @warn "impute_missing_actions is set to true, but there are no missing values in the action columns. Setting impute_missing_actions to false"
-            end
-            #Remove any potential Missing type
-            disallowmissing!(data, collect(action_cols))
-            impute_missing_actions = NoMissingActions()
-        else
-            impute_missing_actions = InferMissingActions()
+            @warn "missing_actions is set to $missing_actions, but there are no missing actions in the dataset. Check that this is intended"
         end
     end
 
@@ -163,6 +164,18 @@ function create_model(
     observation_types_data = eltype.(eachcol(data[!, collect(observation_cols)]))
     action_types_data = eltype.(eachcol(data[!, collect(action_cols)]))
 
+    ## Collect action names ##
+    action_names = collect(keys(action_model.actions))
+
+    ## Create a marker for multiple actions ##
+    if length(action_names) > 1
+        #Marker to indicate that there are multiple actions
+        multiple_actions_marker = MultipleActions()
+    else
+        #Marker to indicate that there is only one action
+        multiple_actions_marker = SingleAction()
+    end
+
     ## Create list of initial states ##
     initial_state_parameter_state_names = NamedTuple(
         parameter.state => ParameterDependentState(parameter_name) for
@@ -175,10 +188,11 @@ function create_model(
         state_name => state.initial_value for
         (state_name, state) in pairs(action_model.states)
     )
-        
+
     ## Create population data ##
     #Remove action and observation columns
-    population_data = data[!,setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
+    population_data =
+        data[!, setdiff(Symbol.(names(data)), vcat(observation_cols, action_cols))]
     #If there are session columns
     if length(session_cols) > 0
         #Only one row per session
@@ -192,7 +206,8 @@ function create_model(
 
     ## Create sessions data ##
     #Only keep actions, observations and session columns
-    sessions_data = data[!, unique(vcat(collect(observation_cols), collect(action_cols), session_cols))]
+    sessions_data =
+        data[!, unique(vcat(collect(observation_cols), collect(action_cols), session_cols))]
     #Group sessions data by session columns
     sessions_data = groupby(sessions_data, session_cols, sort = true)
 
@@ -217,26 +232,75 @@ function create_model(
         session_data in sessions_data
     ]
 
-    ### CREATE MODEL ###
-    ## Create the session model ##
-    session_model = create_session_model(
-        impute_missing_actions,
-        Val(check_parameter_rejections),
-        actions,
-    )
 
-    ## Create a full model ##
+    ## Create missing action markers ##
+    missing_action_markers = [
+        begin
+            #Get matrix with action cols
+            submatrix = Matrix(session_subdata[:, collect(action_cols)])
+
+            #Replace values with markers
+            if missing_actions isa NoMissingActions
+
+                #If there are no missing actions, set all markers to KnownAction
+                submatrix =
+                    map(x -> KnownAction(), submatrix)
+
+            elseif missing_actions isa InferMissingActions
+                #If missing actions should be inferred, set all missing actions to InferAction(), and the rest to KnownAction()
+                submatrix = map(
+                    x -> ifelse(ismissing(x), InferAction(), KnownAction()),
+                    submatrix,
+                )
+
+            elseif missing_actions isa SkipMissingActions
+                #If missing actions should be skipped, set all missing actions to SkipAction(), and the rest to KnownAction()
+                submatrix = map(
+                    x -> ifelse(ismissing(x), SkipAction(), KnownAction()),
+                    submatrix,
+                )
+            end
+
+            #Convert into a vector with a tuple for each row (timestep)
+            Vector{AbstractMissingActionMarker}.(eachrow(submatrix))
+        end
+
+        #For each session
+        for session_subdata in sessions_data
+    ]
+
+
+    ### PREPARE SESSIONS MODEL TYPE ###
+    if sessions_model_type isa FastSessionModel
+
+        #Prepare flattened actions and missing action markers
+        flattened_actions = prepare_flattened_actions(
+            actions,
+            missing_action_markers,
+        )
+
+        #Create the sessions model type with flattened actions
+        sessions_model_type = FastSessionModel(flattened_actions, missing_actions)
+    end
+
+    ### CREATE FULL MODEL ###
+    #Create the Turing model
     model = full_model(
         action_model,
         population_model,
-        session_model,
+        initial_states,
+        parameters_to_estimate,
+        action_names,
+        parameter_rejections,
+        sessions_model_type,
+        session_ids,
         observations,
         actions,
-        parameters_to_estimate,
-        session_ids,
-        initial_states,
+        missing_action_markers,
+        multiple_actions_marker,
     )
 
+    #Return it as part of a ModelFit
     return ModelFit(
         model = model,
         population_model_type = population_model_type,
@@ -250,25 +314,32 @@ end
 
 
 
-###########################
-#### FULL TURING MODEL ####
-###########################
+
+################################
+#### OUTERMOST TURING MODEL ####
+################################
 @model function full_model(
     action_model::ActionModel,
     population_model::DynamicPPL.Model,
-    session_model::Function,
-    observations_per_session::Vector{Vector{O}},
-    actions_per_session::Vector{Vector{AA}},
-    estimated_parameter_names::Tuple{Vararg{Symbol}},
-    session_ids::Vector{String},
     initial_states::NamedTuple{initial_state_keys,<:Tuple},
+    parameter_names::Tuple{Vararg{Symbol}},
+    action_names::Vector{Symbol},
+    check_rejections_marker::AbstractCheckParameterRejectionsMarker,
+    sessions_model_type::AbstractSessionModel,
+    session_ids::Vector{String},
+    observations::Vector{Vector{OO}},
+    actions::Vector{Vector{AA}},
+    missing_action_markers::Vector{Vector{MM}},
+    multiple_actions_marker::AbstractMultipleActionsMarker,
     ::Type{TF} = Float64,
     ::Type{TI} = Int64,
 ) where {
-    O<:Tuple{Vararg{Any}},
-    A<:Union{Missing,Any},
-    AA<:Tuple{Vararg{Union{A,Array{A}}}},
     initial_state_keys,
+    O,
+    OO<:Tuple{Vararg{O}},
+    A,
+    AA<:Tuple{Vararg{A}},
+    MM<:Vector{AbstractMissingActionMarker},
     TF,
     TI,
 }
@@ -276,18 +347,23 @@ end
     model_attributes = initialize_attributes(action_model, initial_states, TF, TI)
 
     #Generate session parameters with the population submodel
-    parameters_per_session ~ to_submodel(population_model, false)
+    parameters ~ to_submodel(population_model, false)
 
     #Generate behavior for each session
     i ~ to_submodel(
-        session_model(
+        sessions_model(
+            check_rejections_marker,
+            sessions_model_type,
             action_model,
             model_attributes,
-            parameters_per_session,
-            observations_per_session,
-            actions_per_session,
-            estimated_parameter_names,
             session_ids,
+            parameter_names,
+            action_names,
+            parameters,
+            observations,
+            actions,
+            missing_action_markers,
+            multiple_actions_marker,
         ),
         false, #Do not add a prefix
     )
@@ -296,14 +372,9 @@ end
 
 
 
-
-
-
-
-
-#########################################
-#### FUNCTION FOR CHECKING THE MODEL ####
-#########################################
+#############################################
+#### FUNCTION FOR CHECKING THE ARGUMENTS ####
+#############################################
 function check_model(
     action_model::ActionModel,
     population_model::DynamicPPL.Model,

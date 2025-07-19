@@ -2,19 +2,121 @@
 ### TYPES FOR SPECIFYING TURING MODELS ###
 ##########################################
 
-#Structs for setting missing actions to be either skipped or inferred
+"""
+AbstractMissingActions
+
+Abstract supertype for strategies specifying how to handle missing actions in a model.
+
+Subtypes:
+- `NoMissingActions`: Do not allow missing actions; throw an error if encountered.
+- `SkipMissingActions`: Skip missing actions during model fitting or simulation.
+- `InferMissingActions`: Treat missing actions as latent variables and infer them during model fitting.
+
+# Usage
+Specify one of these types when constructing a model to control how missing actions are handled.
+
+# Example
+```jldoctest
+julia> NoMissingActions()
+NoMissingActions()
+
+julia> SkipMissingActions()
+SkipMissingActions()
+
+julia> InferMissingActions()
+InferMissingActions()
+```
+"""
 abstract type AbstractMissingActions end
+
+"""
+NoMissingActions <: AbstractMissingActions
+
+Indicates that missing actions are not allowed. An error will be thrown if missing actions are encountered in the data.
+"""
 struct NoMissingActions <: AbstractMissingActions end
+
+"""
+SkipMissingActions <: AbstractMissingActions
+
+Indicates that missing actions should be skipped during model fitting.
+"""
 struct SkipMissingActions <: AbstractMissingActions end
+
+"""
+InferMissingActions <: AbstractMissingActions
+
+Indicates that missing actions should be treated as latent variables and inferred during model fitting.
+"""
 struct InferMissingActions <: AbstractMissingActions end
 
 
+
+"""
+AbstractCheckParameterRejectionsMarker
+
+Abstract supertype for strategies specifying how to handle parameter rejection errors in a model.
+
+Subtypes:
+- `ParameterChecking`: Enable parameter rejection checking during model fitting or simulation.
+- `NoParameterChecking`: Disable parameter rejection checking.
+
+# Usage
+Specify one of these types when constructing a model to control whether parameter rejection errors are checked and handled.
+
+# Example
+```jldoctest
+julia> ParameterChecking()
+ParameterChecking()
+
+julia> NoParameterChecking()
+NoParameterChecking()
+```
+"""
+abstract type AbstractCheckParameterRejectionsMarker end
+
+"""
+ParameterChecking <: AbstractCheckParameterRejectionsMarker
+
+Indicates that parameter rejection errors should be checked and handled during model fitting or simulation.
+"""
+struct ParameterChecking <: AbstractCheckParameterRejectionsMarker end
+
+"""
+NoParameterChecking <: AbstractCheckParameterRejectionsMarker
+
+Indicates that parameter rejection errors should not be checked during model fitting or simulation.
+"""
+struct NoParameterChecking <: AbstractCheckParameterRejectionsMarker end
+
+
+#Internal types for specifying what to do with a specific action if it is missing
+abstract type AbstractMissingActionMarker end
+struct KnownAction <: AbstractMissingActionMarker end
+struct SkipAction <: AbstractMissingActionMarker end
+struct InferAction <: AbstractMissingActionMarker end
+
+#Internal types for specifying whether there are multiple actions in the model
+abstract type AbstractMultipleActionsMarker end
+struct MultipleActions <: AbstractMultipleActionsMarker end
+struct SingleAction <: AbstractMultipleActionsMarker end
+
+#Types for specifying types of population models
 abstract type AbstractPopulationModel end
 
 struct CustomPopulationModel <: AbstractPopulationModel end
 struct RegressionPopulationModel <: AbstractPopulationModel end
 struct IndependentPopulationModel <: AbstractPopulationModel end
 struct SingleSessionPopulationModel <: AbstractPopulationModel end
+
+#Types for specifying types of sessions models
+abstract type AbstractSessionModel end
+
+struct PointwiseSessionModel <: AbstractSessionModel end
+Base.@kwdef mutable struct FastSessionModel{T<:AbstractMissingActions} <: AbstractSessionModel 
+    flattened_actions = nothing #TODO: type this properly
+    missing_actions_strategy::T = NoMissingActions()
+end
 
 
 ## Types for the GLM population model ##

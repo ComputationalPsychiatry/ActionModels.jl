@@ -45,7 +45,7 @@ function get_state_trajectories!(
     agent = init_agent(model.args.action_model, save_history = target_states)
 
     #Extract observations
-    observations_per_session = model.args.observations_per_session
+    observations_per_session = model.args.observations
 
     #Extract dimension labels
     session_ids = all_session_parameters.session_ids
