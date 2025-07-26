@@ -335,10 +335,8 @@ end
     ::Type{TI} = Int64,
 ) where {
     initial_state_keys,
-    O,
-    OO<:Tuple{Vararg{O}},
-    A,
-    AA<:Tuple{Vararg{A}},
+    OO<:Tuple{Vararg{Any}},
+    AA<:Tuple{Vararg{Any}},
     MM<:Vector{AbstractMissingActionMarker},
     TF,
     TI,

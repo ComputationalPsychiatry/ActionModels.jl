@@ -34,7 +34,8 @@ end
     distributions::Vector{D},
 ) where {A<:Any,AA<:Union{A,Array{A}},D<:Distribution}
     #Sample all the actions of one type as a product distribution
-    actions ~ product_distribution(distributions...)
+    #actions ~ product_distribution(distributions...)
+    actions ~ arraydist(distributions)
 end
 
 
@@ -56,10 +57,8 @@ end
     missing_action_markers::Vector{Vector{MM}},
     multiple_actions_marker::AbstractMultipleActionsMarker,
 ) where {
-    O,
-    OO<:Tuple{Vararg{O}},
-    A,
-    AA<:Tuple{Vararg{A}},
+    OO<:Tuple{Vararg{Any}},
+    AA<:Tuple{Vararg{Any}},
     PP,
     MM<:Vector{AbstractMissingActionMarker},
 }
@@ -120,10 +119,8 @@ end
     missing_action_markers_per_session::Vector{Vector{MM}},
     multiple_actions_marker::AbstractMultipleActionsMarker,
 ) where {
-    O,
-    OO<:Tuple{Vararg{O}},
-    A,
-    AA<:Tuple{Vararg{A}},
+    OO<:Tuple{Vararg{Any}},
+    AA<:Tuple{Vararg{Any}},
     PP,
     MM<:Vector{AbstractMissingActionMarker},
 }
@@ -194,10 +191,8 @@ end
 ) where {
     P<:Real,
     PP<:Tuple{Vararg{Union{P,Array{P}}}},
-    O,
-    OO<:Tuple{Vararg{O}},
-    A,
-    AA<:Tuple{Vararg{A}},
+    OO<:Tuple{Vararg{Any}},
+    AA<:Tuple{Vararg{Any}},
     # M<:AbstractMissingActionMarker,
     # MM<:Vector{M},
 }
@@ -241,7 +236,7 @@ end
     actionsₜ::AA,
     missing_action_markersₜ::MM,
     multiple_actions_marker::AbstractMultipleActionsMarker,
-) where {O,OO<:Tuple{Vararg{O}},A,AA<:Tuple{Vararg{A}},MM<:Vector{KnownAction}}
+) where {OO<:Tuple{Vararg{Any}},AA<:Tuple{Vararg{Any}},MM<:Vector{KnownAction}}
     #Give observation and get action distribution
     action_distribution = action_model.action_model(model_attributes, observationsₜ...)
 
@@ -265,10 +260,8 @@ end
     missing_action_markersₜ::MM,
     multiple_actions_marker::AbstractMultipleActionsMarker,
 ) where {
-    O,
-    OO<:Tuple{Vararg{O}},
-    A,
-    AA<:Tuple{Vararg{A}},
+    OO<:Tuple{Vararg{Any}},
+    AA<:Tuple{Vararg{Any}},
     MM<:Vector{AbstractMissingActionMarker},
 }
     #Use the pointwise sessions model to fit the actions of the single timestep
