@@ -151,8 +151,8 @@ RegressionPrior{TDist{Float64}, Truncated{TDist{Float64}, Continuous, Float64, F
 ```
 """
 Base.@kwdef struct RegressionPrior{D1<:Distribution,D2<:Distribution}
-    β::Union{D1,Vector{D1}} = TDist(3)
-    σ::Union{D2,Vector{Vector{D2}}} = truncated(TDist(3), lower = 0)
+    β::Union{D1,Vector{D1}} = Normal(0,1)
+    σ::Union{D2,Vector{Vector{D2}}} = truncated(Normal(0,1), lower = 0)
 end
 
 """
