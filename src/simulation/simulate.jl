@@ -49,7 +49,7 @@ function sample_actions!(action::D) where {D<:Distributions.Distribution}
     #Sample an action from the action distribution
     return rand(action)
 end
-function sample_actions!(action::Tuple{Vararg{D}}) where {D<:Distributions.Distribution}
+function sample_actions!(action::Tuple{Vararg{Distribution}})
     return map(sample_actions!, action)
 end
 
