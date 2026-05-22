@@ -65,6 +65,7 @@ include(joinpath("defining_models", "prints.jl"))
 include(joinpath("defining_models", "model_attributes.jl"))
 include(joinpath("defining_models", "manipulate_attributes.jl"))
 include(joinpath("defining_models", "no_submodel_dispatches.jl"))
+include(joinpath("defining_models", "multi_submodel_dispatches.jl"))
 
 ### Functions for simulation ###
 include(joinpath("simulation", "prints.jl"))
