@@ -326,6 +326,76 @@ ActionModels.NoSubModel()
 """
 struct NoSubModel <: AbstractSubmodel end
 
+
+
+"""
+    MultiSubmodel(submodels)
+
+A wrapper to combine multiple submodels into a single submodel.
+
+This type allows an `ActionModel` to use multiple submodels by merging their parameters and states. 
+Merged names are created by joining the submodel name and the parameter/state name with an underscore 
+(e.g., `submodel1_param1`).
+
+# Arguments
+- `submodels`: A `NamedTuple` containing the individual submodels, where keys are the submodel names.
+
+# Fields
+- `submodels`: The `NamedTuple` of submodels.
+- `parameter_map`: A `NamedTuple` mapping merged parameter names to tuples of `(submodel_name, parameter_name)`.
+- `state_map`: A `NamedTuple` mapping merged state names to tuples of `(submodel_name, state_name)`.
+
+# Examples
+```jldoctest
+julia> sub1 = ActionModels.ContinuousRescorlaWagner(learning_rate=0.1);
+julia> sub2 = ActionModels.ContinuousRescorlaWagner(learning_rate=0.2);
+julia> multi = ActionModels.MultiSubmodel((m1=sub1, m2=sub2));
+julia> keys(ActionModels.get_parameter_types(multi))
+(:m1_initial_value, :m1_learning_rate, :m2_initial_value, :m2_learning_rate)
+```
+"""
+struct MultiSubmodel{T<:NamedTuple} <: ActionModels.AbstractSubmodel
+    submodels::T
+    parameter_map::NamedTuple
+    state_map::NamedTuple
+
+    function MultiSubmodel(submodels::NamedTuple)
+
+        #create empty maps
+        parameter_map = (;)
+        state_map = (;)
+
+        #going through all the submodels
+        for (submodel_name, submodel) in pairs(submodels)
+            
+            #get list of parameter names in the submodel
+            submodel_parameter_names = keys(ActionModels.get_parameter_types(submodel))
+            submodel_state_names = keys(ActionModels.get_state_types(submodel))
+        
+            for parameter_name in submodel_parameter_names
+
+                #connect submodel names to parameter names to not confuse same parameters for different models
+                merged_name = Symbol(string(submodel_name) *"_"* string(parameter_name))
+                parameter_map = merge(parameter_map, NamedTuple{(merged_name,)}(((submodel_name, parameter_name), )))
+            
+            end
+
+            for state_name in submodel_state_names
+                #connect submodel names to state names to not confuse same states for different models
+                merged_name = Symbol(string(submodel_name) *"_"* string(state_name))
+                state_map = merge(state_map, NamedTuple{(merged_name,)}(((submodel_name, state_name), )))
+            
+            end
+
+        end
+         
+        return new{typeof(submodels)}(submodels, parameter_map, state_map) 
+
+    end
+end
+
+
+
 ## ActionModel struct ##
 abstract type AbstractActionModel end
 
@@ -396,9 +466,9 @@ struct ActionModel{T<:AbstractSubmodel} <: AbstractActionModel
             AbstractAction,
             NamedTuple{action_names,<:Tuple{Vararg{AbstractAction}}},
         } where {action_names},
-        submodel::T = NoSubModel(),
+        submodel::S = NoSubModel(),
         verbose::Bool = true,
-    ) where {T<:AbstractSubmodel}
+    ) where {S<:Union{AbstractSubmodel, NamedTuple{Names, <:Tuple{Vararg{AbstractSubmodel}}} where Names}}
         #Make single structs into NamedTuples
         if parameters isa AbstractParameter
             parameters = (; parameter = parameters)
@@ -425,6 +495,11 @@ struct ActionModel{T<:AbstractSubmodel} <: AbstractActionModel
             end
         end
 
+        #Create a MultiSubmodel from the submodel NamedTuple
+        if submodel isa NamedTuple
+            submodel = MultiSubmodel(submodel)
+        end
+
         #Check initial state parameters
         for (parameter_name, parameter) in pairs(parameters)
             if parameter isa InitialStateParameter
@@ -449,7 +524,7 @@ struct ActionModel{T<:AbstractSubmodel} <: AbstractActionModel
             end
         end
 
-        return new{T}(action_model, parameters, states, observations, actions, submodel)
+        return new{typeof(submodel)}(action_model, parameters, states, observations, actions, submodel)
     end
 end
 
@@ -463,6 +538,23 @@ end
 abstract type AbstractSubmodelAttributes <: AbstractSubmodel end
 
 struct NoSubModelAttributes <: AbstractSubmodelAttributes end
+
+"""
+    MultiSubmodelAttributes(attributes_submodels, parameter_map, state_map)
+
+Internal container for the attributes of multiple submodels combined via `MultiSubmodel`.
+
+# Fields
+- `attributes_submodels`: A `NamedTuple` containing the attributes (e.g., `ModelAttributes`) of each submodel.
+- `parameter_map`: A `NamedTuple` mapping merged parameter names to tuples of `(submodel_name, parameter_name)`.
+- `state_map`: A `NamedTuple` mapping merged state names to tuples of `(submodel_name, state_name)`.
+"""
+struct MultiSubmodelAttributes{T<:NamedTuple} <: ActionModels.AbstractSubmodelAttributes
+    attributes_submodels::T
+    parameter_map::NamedTuple
+    state_map::NamedTuple
+end
+
 
 """
 ModelAttributes(parameters, states, actions, initial_states, submodel)
