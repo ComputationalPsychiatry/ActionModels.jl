@@ -1,7 +1,7 @@
 # # Welcome to ActionModels! 
 
-# !!! warning "ActionModels.jl is succeeded by CognitiveModeling.jl"
-#     From version 0.8 on, ActionModels.jl receives only maintenance updates. New projects should use [CognitiveModeling.jl](https://github.com/ComputationalPsychiatry/CognitiveModeling.jl).
+# !!! warning
+#     ActionModels.jl has been rewritten, and is now [CognitiveModeling.jl](https://github.com/ComputationalPsychiatry/CognitiveModeling.jl). ActionModels.jl will be deprecated soon, and will not be maintained further. We strongly recommend using CognitiveModeling.jl for any future work.
 
 # ActionModels.jl is a Julia package for computational modeling of cognition and behaviour.
 # It can be used to fit cognitive models to data, as well as to simulate behaviour.

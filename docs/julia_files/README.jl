@@ -6,7 +6,7 @@
 # [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 # > [!IMPORTANT]
-# > ActionModels.jl is succeeded by [CognitiveModeling.jl](https://github.com/ComputationalPsychiatry/CognitiveModeling.jl). From version 0.8 on, ActionModels.jl receives only maintenance updates. New projects should use CognitiveModeling.jl.
+# > ActionModels.jl has been rewritten, and is now [CognitiveModeling.jl](https://github.com/ComputationalPsychiatry/CognitiveModeling.jl). ActionModels.jl will be deprecated soon, and will not be maintained further. We strongly recommend using CognitiveModeling.jl for any future work.
 
 # # Welcome to ActionModels! 
 
