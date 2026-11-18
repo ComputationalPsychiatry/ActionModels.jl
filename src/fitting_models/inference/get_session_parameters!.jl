@@ -23,7 +23,7 @@ true
 
 # Notes
 - Use `prior_or_posterior = :prior` to extract prior samples instead of posterior.
-- The returned object can be summarized with `Turing.summarize`.
+- The returned object can be summarized with `MCMCChains.summarize`.
 """
 function get_session_parameters!(
     modelfit::ModelFit,

@@ -5,6 +5,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
+> [!IMPORTANT]
+> ActionModels.jl has been rewritten, and is now [CognitiveModeling.jl](https://github.com/ComputationalPsychiatry/CognitiveModeling.jl). ActionModels.jl will be deprecated soon, and will not be maintained further. We strongly recommend using CognitiveModeling.jl for any future work.
+
 # Welcome to ActionModels!
 
 ActionModels is a Julia package for computational modeling of cognition and behaviour.

@@ -2,7 +2,7 @@
 ##### SUMMARIZE SESSION PARAMETERS ####
 #######################################
 """
-    Turing.summarize(session_parameters::SessionParameters, summary_function::Function=median)
+    MCMCChains.summarize(session_parameters::SessionParameters, summary_function::Function=median)
 
 Summarize posterior samples of session-level parameters into a tidy `DataFrame`.
 
@@ -27,7 +27,7 @@ true
 - For array-valued parameters, columns are named with indices, e.g., `:expected_value[1]`.
 - Session identifiers are split into columns if composite.
 """
-function Turing.summarize(
+function MCMCChains.summarize(
     session_parameters::SessionParameters,
     summary_function::Function = median;
 )
@@ -129,7 +129,7 @@ end
 ##### SUMMARIZE STATE TRAJECTORIES ####
 #######################################
 """
-    Turing.summarize(state_trajectories::StateTrajectories, summary_function::Function=median)
+    MCMCChains.summarize(state_trajectories::StateTrajectories, summary_function::Function=median)
 
 Summarize posterior samples of state trajectories into a tidy `DataFrame`.
 
@@ -155,7 +155,7 @@ true
 - Session identifiers are split into columns if composite.
 - The column `timestep` indicates the time index (starting from 0).
 """
-function Turing.summarize(
+function MCMCChains.summarize(
     state_trajectories::StateTrajectories,
     summary_function::Function = median,
 )

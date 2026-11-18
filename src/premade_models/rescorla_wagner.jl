@@ -551,7 +551,7 @@ struct RescorlaWagner <: AbstractPremadeModel
                     rescorla_wagner = attributes.submodel
                     Vₜ = rescorla_wagner.expected_value
                     β⁻¹ = 1/load_parameters(attributes).action_noise
-                    return Bernoulli(logistic(Vₜ * β⁻¹))
+                    return BernoulliLogit(Vₜ * β⁻¹)
                 end
 
                 response_model_observations = (; observation = Observation(Int64))

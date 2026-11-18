@@ -8,7 +8,7 @@ using Distributions
         sub1 = ActionModels.ContinuousRescorlaWagner(learning_rate=0.1, initial_value=0.0)
         sub2 = ActionModels.ContinuousRescorlaWagner(learning_rate=0.2, initial_value=0.5)
         
-        multi = MultiSubmodel((m1=sub1, m2=sub2))
+        multi = ActionModels.MultiSubmodel((m1=sub1, m2=sub2))
         
         # Test parameter names and types
         param_types = ActionModels.get_parameter_types(multi)
@@ -39,24 +39,24 @@ using Distributions
             submodel = (m1=sub1, m2=sub2)
         )
         
-        @test model.submodel isa MultiSubmodel
+        @test model.submodel isa ActionModels.MultiSubmodel
         @test keys(model.submodel.submodels) == (:m1, :m2)
         
         # Test initialization of attributes
         agent = init_agent(model)
-        @test agent.attributes.submodel isa ActionModels.MultiSubmodelAttributes
+        @test agent.model_attributes.submodel isa ActionModels.MultiSubmodelAttributes
         
         # Test getting submodel parameters through merged names
-        @test ActionModels.get_parameters(agent.attributes.submodel, :m1_learning_rate) == 0.1
-        @test ActionModels.get_parameters(agent.attributes.submodel, :m2_learning_rate) == 0.2
+        @test ActionModels.get_parameters(agent.model_attributes.submodel, :m1_learning_rate) == 0.1
+        @test ActionModels.get_parameters(agent.model_attributes.submodel, :m2_learning_rate) == 0.2
         
         # Test setting submodel parameters
-        ActionModels.set_parameters!(agent.attributes.submodel, :m1_learning_rate, 0.5)
-        @test ActionModels.get_parameters(agent.attributes.submodel, :m1_learning_rate) == 0.5
+        ActionModels.set_parameters!(agent.model_attributes.submodel, :m1_learning_rate, 0.5)
+        @test ActionModels.get_parameters(agent.model_attributes.submodel, :m1_learning_rate) == 0.5
         
         # Test getting states
-        @test ActionModels.get_states(agent.attributes.submodel, :m1_expected_value) == 0.0
-        @test ActionModels.get_states(agent.attributes.submodel, :m2_expected_value) == 0.5
+        @test ActionModels.get_states(agent.model_attributes.submodel, :m1_expected_value) == 0.0
+        @test ActionModels.get_states(agent.model_attributes.submodel, :m2_expected_value) == 0.5
     end
 
 end

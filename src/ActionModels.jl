@@ -4,6 +4,7 @@ module ActionModels
 using Reexport
 @reexport using Distributions #Make distributions available to the user
 @reexport using Turing #For fitting models
+@reexport using MCMCChains #For the chains of a fit, which Turing no longer gives by default
 using Turing: DynamicPPL, AbstractMCMC, LogDensityProblems
 
 using RecipesBase #For defining plots

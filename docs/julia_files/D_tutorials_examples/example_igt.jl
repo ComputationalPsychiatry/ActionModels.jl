@@ -122,18 +122,17 @@ model = create_model(
 
 # ## Fitting the model
 # We are now ready to fit the model to the data.
-# For this model, we will use the Enzyme automatic differentiation backend, which is a high-performance automatic differentiation library. 
+# For this model, we will use the ForwardDiff automatic differentiation backend, which is the default, and which is faster for this model than the reverse-mode backends that work with it.
 # Additionally, to keep the runtime of this tutorial short, we will only fit two chains with 500 samples.
 # We will pass `MCMCThreas()` in order to parallelize the sampling across the two chains.
 # This should take up to 10-15 minutes on a standard laptop. Switch to only a single thread for a learer progress bar.
 
 #Set AD backend
-using ADTypes: AutoEnzyme
-import Enzyme: set_runtime_activity, Reverse
-ad_type = AutoEnzyme(; mode = set_runtime_activity(Reverse, true));
+using ADTypes: AutoForwardDiff
+adtype = AutoForwardDiff();
 
 #Fit model
-chns = sample_posterior!(model, MCMCThreads(), init_params = :MAP, n_chains = 2, n_samples = 500, ad_type = ad_type)
+chns = sample_posterior!(model, MCMCThreads(), init_params = :MAP, n_chains = 2, n_samples = 500, adtype = adtype)
 
 # We can now inspect the results of the fitting process.
 # We can plot the posterior distribution over the beta parameters of the regression model.
@@ -273,12 +272,11 @@ simple_model = create_model(
 )
 
 #Set AD backend
-using ADTypes: AutoEnzyme
-import Enzyme: set_runtime_activity, Reverse
-ad_type = AutoEnzyme(; mode = set_runtime_activity(Reverse, true));
+using ADTypes: AutoForwardDiff
+adtype = AutoForwardDiff();
 
 #Fit model
-chns = sample_posterior!(simple_model, n_chains = 1, n_samples = 500, ad_type = ad_type)
+chns = sample_posterior!(simple_model, n_chains = 1, n_samples = 500, adtype = adtype)
 
 #TODO: plot the results
 
