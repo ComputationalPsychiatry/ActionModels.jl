@@ -246,7 +246,7 @@ end
 end
 
 @model function linear_model(
-    X::Matrix{R1}, # model matrix for fixed effects
+    X::AbstractMatrix{R1}, # model matrix for fixed effects
     ranef_info::Union{Nothing,T}; # model matrix for random effects
     inv_link::Function,
     prior::RegPrior,

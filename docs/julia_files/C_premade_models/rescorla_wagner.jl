@@ -375,11 +375,11 @@ model_function = function rescorla_wagner_bernoulli_report(
     #Extract the expected value from the Rescorla-Wagner submodel
     Vₜ = rescorla_wagner.expected_value
 
-    #Transform the expected value with a logistic function to get the action probability, weighted by the action precision β⁻¹
-    action_probability = logistic(Vₜ * β⁻¹)
+    #Weight the expected value by the action precision β⁻¹ to get the log odds of the action
+    action_log_odds = Vₜ * β⁻¹
 
-    #Return the action distribution, which is a Bernoulli distribution with the action probability as parameter
-    action_distribution = Bernoulli(action_probability)
+    #Return the action distribution, a Bernoulli distribution with the logistic of the log odds as the action probability. Giving it the log odds rather than the probability avoids a probability of exactly 1 for large log odds
+    action_distribution = BernoulliLogit(action_log_odds)
 
     return action_distribution
 end;
