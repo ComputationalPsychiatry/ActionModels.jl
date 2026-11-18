@@ -101,7 +101,7 @@ chns = sample_posterior!(model)
 # It can be set to `:MAP` or `:MLE` to use the maximum a posteriori or maximum likelihood estimates as the initial parameters, respectively.
 # It can be set to `:sample_prior` to draw the initial parameters of each chain from the prior distribution, or to `nothing` to use Turing's default of random values between -2 and 2 as the initial parameters.
 # Finally, a vector of initial parameters can be passed, which will be used as the initial parameters for all chains.
-# Other arguments for the sampling can also be passed. This includes the autodifferentiation backend to use, which can be set with the `ad_type` keyword argument, and the sampler to use, which can be set with the `sampler` keyword argument.
+# Other arguments for the sampling can also be passed. This includes the autodifferentiation backend to use, which can be set with the `adtype` keyword argument, and the sampler to use, which can be set with the `sampler` keyword argument.
 # Notably, `sample_posterior!` will return the already sampled `Chains` object if the posterior has already been sampled. Set `resample = true` to override the already sampled posterior.
 
 chns = sample_posterior!(
@@ -110,7 +110,7 @@ chns = sample_posterior!(
     n_samples = 500,
     n_chains = 4,
     init_params = :MAP,
-    ad_type = AutoForwardDiff(),
+    adtype = AutoForwardDiff(),
     sampler = NUTS(),
     resample = true,
 );

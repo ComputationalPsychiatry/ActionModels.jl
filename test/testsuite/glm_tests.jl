@@ -85,6 +85,27 @@ using StatsPlots
             ad_type = AutoFiniteDifferences(; fdm = central_fdm(5, 1))
         end
 
+        #Enzyme throws an IllegalTypeAnalysisException on these models, so one fit with it is marked as broken, and its other tests are skipped
+        if ad_type isa AutoEnzyme
+            @testset "intercept + random effect only ($ad_type)" begin
+                model = create_model(
+                    action_model,
+                    @formula(learning_rate ~ 1 + (1 | id)),
+                    data;
+                    action_cols = action_cols,
+                    observation_cols = observation_cols,
+                    session_cols = session_cols,
+                )
+                @test_broken sample_posterior!(
+                    model,
+                    adtype = ad_type,
+                    n_samples = n_samples,
+                    n_chains = n_chains,
+                ) isa Chains
+            end
+            continue
+        end
+
         @testset "intercept only ($ad_type)" begin
             model = create_model(
                 action_model,
@@ -98,7 +119,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )
@@ -116,7 +137,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )
@@ -155,7 +176,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )
@@ -178,7 +199,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )
@@ -201,7 +222,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )
@@ -224,7 +245,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )
@@ -265,7 +286,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )
@@ -301,7 +322,7 @@ using StatsPlots
             #Posterior
             posterior_chains = sample_posterior!(
                 model,
-                ad_type = ad_type,
+                adtype = ad_type,
                 n_samples = n_samples,
                 n_chains = n_chains,
             )

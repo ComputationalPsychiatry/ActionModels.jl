@@ -102,6 +102,27 @@ using StatsPlots
 
 
 
+        #Enzyme throws an IllegalTypeAnalysisException on this model, so one fit with it is marked as broken, and its other tests are skipped
+        if ad_type isa AutoEnzyme
+            @testset "API tests $(AD)" begin
+                model = create_model(
+                    action_model,
+                    prior,
+                    data,
+                    observation_cols = observation_cols,
+                    action_cols = action_cols,
+                    session_cols = session_cols,
+                )
+                @test_broken sample_posterior!(
+                    model,
+                    adtype = ad_type,
+                    n_samples = n_samples,
+                    n_chains = n_chains,
+                ) isa Chains
+            end
+            continue
+        end
+
         @testset "API tests $(AD)" begin
 
             #Create model
@@ -118,7 +139,7 @@ using StatsPlots
                 #Posterior
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -165,7 +186,7 @@ using StatsPlots
                         model,
                         resample = true,
                         init_params = nothing,
-                        ad_type = ad_type,
+                        adtype = ad_type,
                         n_samples = n_samples,
                         n_chains = n_chains,
                     )
@@ -173,7 +194,7 @@ using StatsPlots
                         model,
                         resample = true,
                         init_params = :MLE,
-                        ad_type = ad_type,
+                        adtype = ad_type,
                         n_samples = n_samples,
                         n_chains = n_chains,
                     )
@@ -181,7 +202,7 @@ using StatsPlots
                         model,
                         resample = true,
                         init_params = :MAP,
-                        ad_type = ad_type,
+                        adtype = ad_type,
                         n_samples = n_samples,
                         n_chains = n_chains,
                     )
@@ -189,7 +210,7 @@ using StatsPlots
                         model,
                         resample = true,
                         init_params = :sample_prior,
-                        ad_type = ad_type,
+                        adtype = ad_type,
                         n_samples = n_samples,
                         n_chains = n_chains,
                     )
@@ -307,7 +328,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -328,7 +349,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -387,7 +408,7 @@ using StatsPlots
 
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -434,7 +455,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -488,7 +509,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -536,7 +557,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -557,7 +578,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -601,7 +622,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -648,7 +669,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -699,7 +720,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -728,7 +749,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -753,7 +774,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -772,7 +793,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -815,7 +836,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -862,7 +883,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -910,7 +931,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -954,7 +975,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -985,7 +1006,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1011,7 +1032,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1039,7 +1060,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1067,7 +1088,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1115,7 +1136,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1167,7 +1188,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1212,7 +1233,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1260,7 +1281,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
@@ -1313,7 +1334,7 @@ using StatsPlots
                 #Fit model
                 posterior_chains = sample_posterior!(
                     model,
-                    ad_type = ad_type,
+                    adtype = ad_type,
                     n_samples = n_samples,
                     n_chains = n_chains,
                 )
