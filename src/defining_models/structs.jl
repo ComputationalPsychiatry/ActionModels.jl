@@ -348,8 +348,11 @@ Merged names are created by joining the submodel name and the parameter/state na
 # Examples
 ```jldoctest
 julia> sub1 = ActionModels.ContinuousRescorlaWagner(learning_rate=0.1);
+
 julia> sub2 = ActionModels.ContinuousRescorlaWagner(learning_rate=0.2);
+
 julia> multi = ActionModels.MultiSubmodel((m1=sub1, m2=sub2));
+
 julia> keys(ActionModels.get_parameter_types(multi))
 (:m1_initial_value, :m1_learning_rate, :m2_initial_value, :m2_learning_rate)
 ```
@@ -415,11 +418,11 @@ Main container for a user-defined or premade action model.
 
 # Examples
 ```jldoctest
-julia> model_fn = (attributes, obs) -> Normal(0, 1);
+julia> model_fn(attributes, obs) = Normal(0, 1);
 
 julia> ActionModel(model_fn, parameters=(learning_rate=Parameter(0.1),), states=(expected_value=State(0.0),), observations=(observation=Observation(),), actions=(report=Action(Normal),))
 -- ActionModel --
-Action model function: #1
+Action model function: model_fn
 Number of parameters: 1
 Number of states: 1
 Number of observations: 1
@@ -427,7 +430,7 @@ Number of actions: 1
 
 julia> ActionModel(model_fn, parameters=Parameter(0.1), actions = Action(Normal), verbose = false)
 -- ActionModel --
-Action model function: #1
+Action model function: model_fn
 Number of parameters: 1
 Number of states: 0
 Number of observations: 0
