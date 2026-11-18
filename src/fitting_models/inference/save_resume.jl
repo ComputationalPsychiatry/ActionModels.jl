@@ -1,5 +1,5 @@
 function prepare_sampler(
-    sampler::Union{DynamicPPL.AbstractSampler,Turing.Inference.InferenceAlgorithm},
+    sampler::AbstractMCMC.AbstractSampler,
     chains::Chains,
 )
     @error "Save and continue for sampler type $(typeof(sampler)) not implemented"
@@ -106,8 +106,8 @@ function sample_save_resume(
     n_samples::Integer,
     n_chains::Integer,
     parallelization::AbstractMCMC.AbstractMCMCEnsemble,
-    sampler::Union{DynamicPPL.AbstractSampler,Turing.Inference.InferenceAlgorithm},
-    init_params::Union{Nothing,Vector{Float64}} = nothing,
+    sampler::AbstractMCMC.AbstractSampler,
+    init_params::Union{Nothing,DynamicPPL.AbstractInitStrategy} = nothing,
     sampler_kwargs...,
 )
 
@@ -142,15 +142,20 @@ function sample_save_resume(
                 final_segment > 0 && cur_seg == n_segments ? final_segment :
                 save_resume.save_every
             # Run the sampler
+            #A chain that was saved before is resumed from its last state, and a new one starts at the initial parameters
+            start = if isnothing(resume_from[chain])
+                initial_params_keyword(init_params)
+            else
+                (; initial_state = loadstate(resume_from[chain]))
+            end
             seg = sample(
                 model,
                 samplers[chain],
                 n_iter;
-                nchains = 1,
                 progress = false,
-                resume_from = resume_from[chain],
                 save_state = true,
-                init_params = init_params,
+                chain_type = Chains,
+                start...,
                 sampler_kwargs...,
             )
             # Save the chain

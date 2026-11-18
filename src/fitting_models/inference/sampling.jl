@@ -11,7 +11,7 @@ This function runs MCMC sampling for the provided `ModelFit` object, storing the
 - `verbose::Bool`: Whether to display warnings (default: `true`).
 - `resample::Bool`: Whether to force resampling even if results exist (default: `false`).
 - `save_resume::Union{SampleSaveResume,Nothing}`: Save/resume configuration (default: `nothing`).
-- `init_params::Union{Nothing,Symbol,Vector{Float64}}`: How to initialize the sampler (default: `:sample_prior`).
+- `init_params::Union{Nothing,Symbol,Vector{Float64},DynamicPPL.AbstractInitStrategy}`: How to initialize the sampler (default: `:sample_prior`).
 - `n_samples::Integer`: Number of samples per chain (default: `1000`).
 - `n_chains::Integer`: Number of MCMC chains (default: `2`).
 - `adtype`: Automatic differentiation type (default: `AutoForwardDiff()`).
@@ -36,11 +36,11 @@ function sample_posterior!(
     verbose::Bool = true,
     resample::Bool = false,
     save_resume::Union{SampleSaveResume,Nothing} = nothing,
-    init_params::Union{Nothing,Symbol,Vector{Float64}} = :sample_prior,
+    init_params::Union{Nothing,Symbol,Vector{Float64},DynamicPPL.AbstractInitStrategy} = :sample_prior,
     n_samples::Integer = 1000,
     n_chains::Integer = 2,
     adtype = AutoForwardDiff(),
-    sampler::Union{DynamicPPL.AbstractSampler,Turing.Inference.InferenceAlgorithm} = NUTS(;
+    sampler::AbstractMCMC.AbstractSampler = NUTS(;
         adtype = adtype,
     ),
     sampler_kwargs...,
@@ -55,20 +55,20 @@ function sample_posterior!(
     #Extract model
     model = modelfit.model
 
-    #If init_params is a symbol, extract it in the corresponding way
+    #If init_params is a symbol, make the corresponding initialisation strategy
     if init_params isa Symbol
 
         #Use the Maximum a Posteriori (MAP) estimate as the initial parameters
         if init_params == :MAP
-            init_params = maximum_a_posteriori(model, adtype = sampler.adtype).values.array
+            init_params = InitFromParams(maximum_a_posteriori(model, adtype = sampler.adtype))
 
             #Use the Maximum Likelihood (MLE) estimate as the initial parameters
         elseif init_params == :MLE
-            init_params = maximum_likelihood(model, adtype = sampler.adtype).values.array
+            init_params = InitFromParams(maximum_likelihood(model, adtype = sampler.adtype))
 
-            #Draw a single initial sample from the prior
+            #Draw the initial parameters of each chain from the prior
         elseif init_params == :sample_prior
-            init_params = DynamicPPL.VarInfo(model)[:]
+            init_params = InitFromPrior()
 
         else
             throw(
@@ -77,13 +77,19 @@ function sample_posterior!(
                 ),
             )
         end
+
+        #A vector of values, in the order of the model's parameters, starts every chain at those values
+    elseif init_params isa Vector{Float64}
+        init_params = DynamicPPL.InitFromVector(init_params, LogDensityFunction(model))
     end
 
-    #Check whether a gradient can be calculated at init_params
+    #Check whether a gradient can be calculated at the initial parameters
     if !isnothing(init_params)
+        log_density_function = LogDensityFunction(model; adtype = sampler.adtype)
+        initial_values = rand(log_density_function, init_params)
         gradients = LogDensityProblems.logdensity_and_gradient(
-            LogDensityFunction(model; adtype = sampler.adtype),
-            init_params,
+            log_density_function,
+            initial_values,
         )[2]
         if verbose && (any(isinf.(gradients)) || any(isnan.(gradients)))
             @warn """
@@ -97,7 +103,7 @@ function sample_posterior!(
         #Check if gradient agrees with ForwardDiff
         forwarddiff_gradients = LogDensityProblems.logdensity_and_gradient(
             LogDensityFunction(model; adtype = AutoForwardDiff()),
-            init_params,
+            initial_values,
         )[2]
 
         gradient_differences = gradients .- forwarddiff_gradients
@@ -122,7 +128,8 @@ function sample_posterior!(
             parallelization,
             n_samples,
             n_chains;
-            init_params = init_params,
+            initial_params_keyword(init_params, n_chains)...,
+            chain_type = Chains,
             sampler_kwargs...,
         )
     else
@@ -191,10 +198,27 @@ function sample_prior!(
     model = modelfit.model
 
     #Sample prior
-    chains = sample(model, Prior(), parallelization, n_samples, n_chains; sampler_kwargs...)
+    chains = sample(
+        model,
+        Prior(),
+        parallelization,
+        n_samples,
+        n_chains;
+        chain_type = Chains,
+        sampler_kwargs...,
+    )
 
     #Store the prior
     modelfit.prior = ModelFitResult(; chains = chains)
 
     return chains
+end
+
+
+#The initial parameters as a keyword for sample, which is left out when the sampler decides them. Sampling chains with a parallelization takes the initialization strategy once for each chain, so that each chain applies it on its own
+initial_params_keyword(::Nothing) = (;)
+initial_params_keyword(init_params::DynamicPPL.AbstractInitStrategy) = (; initial_params = init_params)
+initial_params_keyword(::Nothing, n_chains::Integer) = (;)
+function initial_params_keyword(init_params::DynamicPPL.AbstractInitStrategy, n_chains::Integer)
+    return (; initial_params = fill(init_params, n_chains))
 end
